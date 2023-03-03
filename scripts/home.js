@@ -3,7 +3,7 @@
     waypoint => location name
     location => weather
 */
-/*
+
 var lat = '';
 var lon = '';
 const ori = '110.217390,-7.836583'; //lon,lat
@@ -63,7 +63,7 @@ async function get_route(){
     const route_data = await response_1.json();
     const steps = route_data.routes[0].legs[0].steps;
 
-    localStorage.setItem('route', route_data)
+    localStorage.setItem('route', route_data);
     show_result(steps);
 }
 
@@ -76,9 +76,11 @@ async function get_name(loc){
 
     let name_data = await response_2.json();
     let address = name_data.results[0].formatted.split(', ').slice(-4).toString().replace(/\s\d+/g, "");
-    console.log(address)
+    console.log(address);
     
-    get_weather(address);
+    let weather = get_weather(address);
+
+    return [address, weather];
 }
 
 // function for each city/district name to get weather
@@ -90,11 +92,22 @@ async function get_weather(ad){
 // function to show the final result
 function show_result(s){
     for(let i=0; i<s.length; i++){
-        let lat = s[i].maneuver.location[1];
-        let lon = s[i].maneuver.location[0];
-
-        let address = get_name(`${lat}${lon}`);
-    }
+        lat = s[i].maneuver.location[1];
+        lon = s[i].maneuver.location[0];
+        
+        document.getElementById('route_steps').innerHTML +=
+            `
+                <div id="coor_${i}" class="coor"></div>
+                <div id="loc_${i}" class="loc"></div>
+                <div id="wea_${i}" class="wea"></div>
+            `;
+        
+        
+        var info = get_name(`${lat},${lon}`);
+        document.getElementById(`coor_${i}`).textContent = `${lat},${lon}`;
+        document.getElementById(`loc_${i}`).textContent = info[0];
+        document.getElementById(`wea_${i}`).textContent = info[1];
+    } //STUCK
 }
 
 // main function
@@ -105,6 +118,5 @@ window.onload = () => {
     document.getElementById('time_dep').min = today;
     document.getElementById('time_dep').max = max_date;
 
-    get_name();
+    get_route();
 }
-*/
