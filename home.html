@@ -10,14 +10,82 @@
     <script src="./scripts/home.js"></script>
 </head>
 <body>
+    <!--
+        
+    
     <div id="input_user">
         <input type="text" placeholder="origin (lat/lon)" id="coor_ori" class="query" required>
         <input type="datetime-local" max="" min="" placeholder="time departure" id="time_dep" class="query" required>
         <input type="text" placeholder="destination (lat/lon)" id="coor_dest" class="query" required>
         <input type="button" value="process">
     </div>
-    
+
     <div id="route_steps"></div>
+-->
+<button id="btn">press</button>
+<div id="main"></div>
 
 </body>
+
+<script>
+    function get_userloc(){
+        if(navigator.geolocation){
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        }else{
+            alert("Can't find your location. Not supported by this browser.");
+        }
+    }
+
+    var lat;
+    var lon;
+    function showPosition(position){
+        alert('Found your location.');
+        lat = position.coords.latitude;
+        lon = position.coords.longitude;
+        
+    }
+
+    function showError(error){
+        switch(error.code){
+            case error.PERMISSION_DENIED:
+                alert('Please allow GPS access for this site.');
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert('Your location is unavailable.');
+                break;
+            case error.TIMEOUT:
+                alert('Timed out. Proccess took too long.');
+                break;
+            case error.UNKNOWN_ERROR:
+                alert('An unknown error occured.');
+                break;
+        }
+    }
+
+    var address;
+
+    async function get_name(){
+        const name_api_key = 'b3bea85fe88146bf89d7c25c7c50f545';
+        let name_url = `https://api.opencagedata.com/geocode/v1/json?q=${lat},${lon}&key=${name_api_key}&language=en&no_annotations=1&address_only=1&limit=1&no_record=1`;
+        let response_2 = await fetch(name_url, {method: 'GET'})
+            .catch(err => console.error(err));
+
+        let name_data = await response_2.json();
+        console.log(name_data);
+        address = name_data.results[0].formatted.split(', ').slice(-4).toString().replace(/\s\d+/g, "");
+        console.log(address);
+    }
+
+    window.onload = () => {
+        showPosition();
+        get_name();
+
+        var button = document.getElementById('btn');
+        button.onclick = function(){
+            document.getElementById('main').textContent += address;
+        }
+    }
+    
+</script>
+
 </html>

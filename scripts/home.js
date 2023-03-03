@@ -3,7 +3,7 @@
     waypoint => location name
     location => weather
 */
-
+/*
 var lat = '';
 var lon = '';
 const ori = '110.217390,-7.836583'; //lon,lat
@@ -107,3 +107,4 @@ window.onload = () => {
 
     get_name();
 }
+*/
