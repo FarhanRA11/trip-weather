@@ -42,6 +42,8 @@
         alert('Found your location.');
         lat = position.coords.latitude;
         lon = position.coords.longitude;
+        console.log(lat, lon)
+        get_name(`${lat},${lon}`)
         
     }
 
@@ -64,21 +66,19 @@
 
     var address;
 
-    async function get_name(){
+    async function get_name(loc){
         const name_api_key = 'b3bea85fe88146bf89d7c25c7c50f545';
-        let name_url = `https://api.opencagedata.com/geocode/v1/json?q=${lat},${lon}&key=${name_api_key}&language=en&no_annotations=1&address_only=1&limit=1&no_record=1`;
+        let name_url = `https://api.opencagedata.com/geocode/v1/json?q=${loc}&key=${name_api_key}&language=en&no_annotations=1&address_only=1&limit=1&no_record=1`;
         let response_2 = await fetch(name_url, {method: 'GET'})
             .catch(err => console.error(err));
 
         let name_data = await response_2.json();
-        console.log(name_data);
         address = name_data.results[0].formatted.split(', ').slice(-4).toString().replace(/\s\d+/g, "");
         console.log(address);
     }
 
     window.onload = () => {
-        showPosition();
-        get_name();
+        get_userloc();
 
         var button = document.getElementById('btn');
         button.onclick = function(){
