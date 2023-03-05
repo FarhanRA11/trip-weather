@@ -1,16 +1,17 @@
-/*
-    route => waypoint (lat,lon,time,dist)
-    waypoint => location name
-    location => weather
-*/
-
-var lat = '';
-var lon = '';
-const ori = '110.217390,-7.836583'; //lon,lat
-const des = '110.371749,-7.766113'; //lon,lat
-const dep = '';
+// function to convert unix time to formatted date YYYY-MM-DDThh:mm
+function formatted_date(time){
+	const year = new Date(time).getFullYear();
+    const month = (new Date(time).getMonth() + 1).toString().padStart(2, '0');
+    const date = new Date(time).getDate().toString().padStart(2, '0');
+    const hour = new Date(time).getHours().toString().padStart(2, '0');
+    const minute = new Date(time).getMinutes().toString().padStart(2, '0');
+    
+    return `${year}-${month}-${date}T${hour}:${minute}`;
+}
 
 // 3 function to get user location
+var lat;
+var lon;
 function get_userloc(){
     if(navigator.geolocation){
         navigator.geolocation.getCurrentPosition(showPosition, showError);
@@ -42,74 +43,6 @@ function showError(error){
     }
 }
 
-// function to convert unix time to formatted date YYYY-MM-DDThh:mm
-function formatted_date(time){
-	const year = new Date(time).getFullYear();
-    const month = (new Date(time).getMonth() + 1).toString().padStart(2, '0');
-    const date = new Date(time).getDate().toString().padStart(2, '0');
-    const hour = new Date(time).getHours().toString().padStart(2, '0');
-    const minute = new Date(time).getMinutes().toString().padStart(2, '0');
-    
-    return `${year}-${month}-${date}T${hour}:${minute}`;
-}
-
-// function to get route from origin and destination
-async function get_route(){
-    const route_url = `http://router.project-osrm.org/route/v1/driving/${ori};${des}?overview=false&steps=true`;
-    const response_1 = await fetch(route_url, {
-        method: 'GET'
-    }).catch(err => console.error(err));
-
-    const route_data = await response_1.json();
-    const steps = route_data.routes[0].legs[0].steps;
-
-    localStorage.setItem('route', route_data);
-    show_result(steps);
-}
-
-// function for each waypoint to get city/district name
-async function get_name(loc){
-    const name_api_key = 'b3bea85fe88146bf89d7c25c7c50f545';
-    let name_url = `https://api.opencagedata.com/geocode/v1/json?q=${loc}&key=${name_api_key}&language=en&no_annotations=1&address_only=1&limit=1&no_record=1`;
-    let response_2 = await fetch(name_url, {method: 'GET'})
-        .catch(err => console.error(err));
-
-    let name_data = await response_2.json();
-    let address = name_data.results[0].formatted.split(', ').slice(-4).toString().replace(/\s\d+/g, "");
-    console.log(address);
-    
-    let weather = get_weather(address);
-
-    return [address, weather];
-}
-
-// function for each city/district name to get weather
-async function get_weather(ad){
-    const weather_api_key = 'VZL3Q3HAS9A2H7BHMTH7YNLAW';
-    let weather_url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${ad}/${dep}?unitGroup=metric&key=${weather_api_key}&contentType=json`;
-}
-
-// function to show the final result
-function show_result(s){
-    for(let i=0; i<s.length; i++){
-        lat = s[i].maneuver.location[1];
-        lon = s[i].maneuver.location[0];
-        
-        document.getElementById('route_steps').innerHTML +=
-            `
-                <div id="coor_${i}" class="coor"></div>
-                <div id="loc_${i}" class="loc"></div>
-                <div id="wea_${i}" class="wea"></div>
-            `;
-        
-        
-        var info = get_name(`${lat},${lon}`);
-        document.getElementById(`coor_${i}`).textContent = `${lat},${lon}`;
-        document.getElementById(`loc_${i}`).textContent = info[0];
-        document.getElementById(`wea_${i}`).textContent = info[1];
-    } //STUCK
-}
-
 // main function
 window.onload = () => {
     // Get date 10 day ahead range for routing
@@ -118,5 +51,16 @@ window.onload = () => {
     document.getElementById('time_dep').min = today;
     document.getElementById('time_dep').max = max_date;
 
-    get_route();
+    // passing inputted data to result.html
+    document.getElementById('btn_search').onclick = () => {
+        let origin = (document.getElementById('coor_ori').value).replaceAll(' ', '');
+        let destination = document.getElementById('coor_dest').value.replaceAll(' ', '');
+        let datetime = document.getElementById('time_dep').value;
+
+        console.log(origin);
+        console.log(destination);
+        console.log(datetime);
+
+        window.open(`./html/result.html?${origin}&${destination}&${datetime}`, '_blank');
+    }
 }
