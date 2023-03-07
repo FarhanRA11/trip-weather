@@ -8,16 +8,74 @@
     <link rel="stylesheet" href="./styles/home.css">
     <link rel="icon" href="">
     <script src="./scripts/home.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 </head>
 <body>
     <h1>Weather Trip</h1>
+    
+    <div id="map"></div>
+    <button id="btn_myloc">Find My Location</button>
+
+    <form id="input_user" method="get" action="./html/result.html">
+        <input 
+            type="text" step="any" pattern="[0-9.-]{1,}"
+            placeholder="latitude origin" 
+            id="coor_ori1" class="query" name="ogn_lat" 
+            required 
+            value="12.34">
+        <input 
+            type="text" step="any" pattern="[0-9.-]{1,}"
+            placeholder="longitude origin" 
+            id="coor_ori2" class="query" name="ogn_lon" 
+            required 
+            value="-34.56">
+        
+        <input 
+            type="text" step="any" pattern="[0-9.-]{1,}"
+            placeholder="latitude destination" 
+            id="coor_dest1" class="query" name="dtn_lat" 
+            required 
+            value="-56.78">
+        <input 
+            type="text" step="any" pattern="[0-9.-]{1,}"
+            placeholder="longitude destination" 
+            id="coor_dest2" class="query" name="dtn_lon" 
+            required 
+            value="78.90">
+        
+        <p>(ex. -12.345678)</p>
+
+        <input 
+            type="datetime-local" 
+            max="" min="" 
+            id="time_dep" class="query" name="dt" 
+            required>
+        <input 
+            type="submit" 
+            id="btn_search" class="query"
+            value="Submit">
+    </form>
+
     <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, molestias! Molestias ad sapiente reprehenderit ab eius suscipit, iusto fugit ducimus porro quidem voluptates numquam tenetur ea totam placeat, praesentium aperiam!</h3>
 
-    <div id="input_user">
-        <input type="text" placeholder="origin (lat/lon)" id="coor_ori" class="query" required>
-        <input type="datetime-local" max="" min="" id="time_dep" class="query" required>
-        <input type="text" placeholder="destination (lat/lon)" id="coor_dest" class="query" required>
-        <input type="button" value="process" id="btn_search">
-    </div>
+    <footer>
+        All about this website, source, feature, etc. is in the documentation page. Click this link,
+        <a href="./html/documentation.html" id="doc_btn">Documentation</a>
+    </footer>
 </body>
+
+<script>
+    // codeblock to setting up embedded map
+    var map = L.map('map').setView([-2.727972910454888, 117.59765625000001], 1);
+    
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    var mark_ori = L.marker();
+    var mark_des = L.marker();
+</script>
+
 </html>

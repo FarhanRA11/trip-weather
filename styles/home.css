@@ -1,0 +1,34 @@
+#map{
+    height: 400px;
+    width: 550px;
+    margin: 10px;
+}
+
+#option_map{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.btn_map{
+    width: 130px;
+    margin-top: 10px;
+}
+
+.query{
+    margin-top: 5px;
+}
+
+#input_user{
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+}
+
+p{
+    margin: 0;
+}
+
+#time_dep{
+    width: 150px;
+}
