@@ -18,34 +18,33 @@
     <button id="btn_myloc">Find My Location</button>
 
     <form id="input_user" method="get" action="./html/result.html">
+        <p>origin:</p>
         <input 
             type="text" step="any" pattern="[0-9.-]{1,}"
-            placeholder="latitude origin" 
+            placeholder="latitude" title="latitude"
             id="coor_ori1" class="query" name="ogn_lat" 
-            required 
-            value="12.34">
+            required>
         <input 
             type="text" step="any" pattern="[0-9.-]{1,}"
-            placeholder="longitude origin" 
+            placeholder="longitude" title="longitude"
             id="coor_ori2" class="query" name="ogn_lon" 
-            required 
-            value="-34.56">
+            required>
         
+        <p>destination:</p>
         <input 
             type="text" step="any" pattern="[0-9.-]{1,}"
-            placeholder="latitude destination" 
+            placeholder="latitude" title="latitude"
             id="coor_dest1" class="query" name="dtn_lat" 
-            required 
-            value="-56.78">
+            required>
         <input 
             type="text" step="any" pattern="[0-9.-]{1,}"
-            placeholder="longitude destination" 
+            placeholder="longitude" title="longitude"
             id="coor_dest2" class="query" name="dtn_lon" 
-            required 
-            value="78.90">
+            required>
         
         <p>(ex. -12.345678)</p>
 
+        <p>departure in local time</p>
         <input 
             type="datetime-local" 
             max="" min="" 

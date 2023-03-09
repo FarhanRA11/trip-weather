@@ -12,16 +12,6 @@ function formatted_datetime(time){
 // 3 function to get user location
 var lat;
 var lon;
-var markers = {
-    'ori': {
-        'lat': '',
-        'lon': ''
-    },
-    'des': {
-        'lat': '',
-        'lon': ''
-    }
-};
 
 function get_userloc(){
     if(navigator.geolocation){
@@ -84,7 +74,7 @@ window.onload = () => {
         
         L.popup().setLatLng(event.latlng).setContent(
             `
-                ${lat};${lon}
+                ${lat}, ${lon}
                 <div id="option_map">
                     <button onclick="select_coor_ori()" class="btn_map">Set as Origin</button>
                     <button onclick="select_coor_des()" class="btn_map">Set as Destination</button>
