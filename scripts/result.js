@@ -106,7 +106,9 @@ async function get_name(loc, c, pass_unix){//13 dig num
 
 // function, for each city/district name to get weather, 1000/day
 async function get_weather(ad, unix, c){//13 dig num
-    const weather_api_key = 'VZL3Q3HAS9A2H7BHMTH7YNLAW';
+    const weather_api_key = 'C3M5RHSXUYS3EBRA9WCUTY93A';
+    //VZL3Q3HAS9A2H7BHMTH7YNLAW f
+    //C3M5RHSXUYS3EBRA9WCUTY93A u
     let weather_url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${ad}/${Math.round(unix/Math.pow(10,3))}?unitGroup=metric&key=${weather_api_key}&include=current&iconSet=icons2&contentType=json&elements=cloudcover,dew,feelslike,humidity,icon,precip,precipprob,pressure,snow,snowdepth,temp,uvindex,visibility,winddir,windgust,windspeed`;
 
 
