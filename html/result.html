@@ -8,10 +8,17 @@
     <link rel="stylesheet" href="../styles/result.css">
     <link rel="icon" href="">
     <script src="../scripts/result.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 </head>
 <body>
-    <div id="par"></div>
+    <!--lanjuttttt-->
+    <h1 id="tt_ori">Origin: </h1>
+    <h1 id="tt_ori">Destination: </h1>
+    <h2 id="tt_ori">Origin: </h2>
+    <h1 id="tt_ori">Origin: </h1>
 
+    <div id="map"></div>
     <div id="route_steps"></div>
 
     <footer>
@@ -19,4 +26,13 @@
         <a href="./html/documentation.html" id="doc_btn">Documentation</a>
     </footer>
 </body>
+<script>
+    // codeblock to setting up embedded map
+    var map = L.map('map').setView([0, 0], 1);
+    
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+</script>
 </html>

@@ -1,3 +1,18 @@
+body{
+    scroll-behavior: smooth;
+}
+
+#map{
+    height: 400px;
+    width: 550px;
+    margin: 10px;
+}
+
+.bindPopup{
+    display: flex;
+    flex-direction: row;
+}
+
 #input_user{
     display: flex;
     flex-direction: column;

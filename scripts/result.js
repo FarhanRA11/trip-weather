@@ -26,7 +26,6 @@ async function get_route(){
         alert("Sorry, Can't find the route. Go back and try different point")
     }
     const steps = route_data.routes[0].legs[0].steps;
-    console.log(steps);
 
     show_results(steps);
 }
@@ -72,49 +71,88 @@ async function get_name(loc, c, pass_unix){//13 dig num
     if(!address_list.includes(address)){
         address_list.push(address);
         document.getElementById(`loc_${c}`).textContent = address;
-
-        let weather = await get_weather(address, pass_unix, c);//13 dig num
-        document.getElementById(`wea_${c}`).innerHTML = weather;
+        get_weather(address, pass_unix, c);
     }else{
         document.getElementById(`root_${c}`).remove();
+        map.eachLayer(layer => {
+            if(layer.options && layer.options.id === `mark_${c}`){
+                map.removeLayer(layer);
+            }
+        });
     }
 }
 
 // function, for each city/district name to get weather, 1000/day
 async function get_weather(ad, unix, c){//13 dig num
-    console.log(new Date(unix).toLocaleString())
     const weather_api_key = 'VZL3Q3HAS9A2H7BHMTH7YNLAW';
     let weather_url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${ad}/${Math.round(unix/Math.pow(10,3))}?unitGroup=metric&key=${weather_api_key}&include=current&iconSet=icons2&contentType=json&elements=cloudcover,dew,feelslike,humidity,icon,precip,precipprob,pressure,snow,snowdepth,temp,uvindex,visibility,winddir,windgust,windspeed`;
 
-    let response_3 = await fetch(weather_url, {method: 'GET'})
-        .catch(err => console.error(err));
-    let weather_data = await response_3.json();
 
-    let cloudcover = weather_data.days[0].cloudcover;
-    let dew = weather_data.days[0].dew;
-    let feelslike = weather_data.days[0].feelslike;
-    let humidity = weather_data.days[0].humidity;
-    let icon = weather_data.days[0].icon; //
-    let precip = weather_data.days[0].precip;
-    let precipprob = weather_data.days[0].precipprob; //
-    let pressure = weather_data.days[0].pressure;
-    let snow = weather_data.days[0].snow;
-    let snowdepth = weather_data.days[0].snowdepth;
-    let temp = weather_data.days[0].temp; //
-    let uvindex = weather_data.days[0].uvindex;
-    let visibility = weather_data.days[0].visibility;
-    let winddir = weather_data.days[0].winddir;
-    let windgust = weather_data.days[0].windgust;
-    let windspeed = weather_data.days[0].windspeed; //
+    fetch(weather_url, {method: 'GET'})
+        .then(response => {
+            if(!response.ok){
+                document.getElementById(`root_${c}`).remove();
+                map.eachLayer((layer) => {
+                    if(layer.options && layer.options.id === `mark_${c}`){
+                        map.removeLayer(layer);
+                    }
+                });
+                throw new Error('response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            data = data.days[0];
 
-    document.getElementById(`ico_${c}`).src = `../images/weather_icon/${icon}.png`;
+            let cloudcover = data.cloudcover;
+            let dew = data.dew;
+            let feelslike = data.feelslike;
+            let humidity = data.humidity;
+            let icon = data.icon; //
+            let precip = data.precip;
+            let precipprob = data.precipprob; //
+            let pressure = data.pressure;
+            let snow = data.snow;
+            let snowdepth = data.snowdepth;
+            let temp = data.temp; //
+            let uvindex = data.uvindex;
+            let visibility = data.visibility;
+            let winddir = data.winddir;
+            let windgust = data.windgust;
+            let windspeed = data.windspeed; //
 
-    //send to cookie --> weather, unix
-    document.cookie = `${ad}=${JSON.stringify(weather_data.days[0])}; expires=${new Date(Date.now() + 1728000000).toUTCString()}`;
 
-    document.getElementById(`det_${c}`).href = `../html/details.html?${ad}`
+            let weather = `
+                situation: ${icon}, 
+                rain probability: ${precipprob}%, 
+                temperature: ${temp}&degC, 
+                wind: ${windspeed} km/h`
+            document.getElementById(`wea_${c}`).innerHTML = weather;
+            // bindPopup per button here
+            
+            map.eachLayer(layer => {
+                if(layer.options && layer.options.id === `mark_${c}`){
+                    layer.bindPopup(`
+                    <div class="bindPopup">
+                        <img src="../images/weather_icon/${icon}.png" class="icon" alt="icon">
+                        <div class="temp">${temp}&degC</div>
+                        <a class="see_more" href="#root_${c}">See details</a>
+                    </div>
+                    `)
+                }
+            })
+        })
+        .catch(error => {
+            console.error("there's problem while fetching data:", error);
+        });
 
-    return `${icon}, rain probability: ${precipprob}%, temperature: ${temp}&degC, wind: ${windspeed} km/h`;
+        
+
+    // let response_3 = await fetch(weather_url, {method: 'GET'})
+    //     .catch(err => console.error(err));
+    // let weather_data = await response_3.json();
+
+    
 }
 
 // function to show the final result
@@ -122,17 +160,18 @@ function show_results(s){
     for(let i=0; i<s.length; i++){
         let lat = s[i].maneuver.location[1];
         let lon = s[i].maneuver.location[0];
-        let duration = (s[i].duration)*1000;
+        let duration = (s[i].weight + s[i].intersections.length*3)*1000;
         dep_unix += duration;
-        
+
+        L.marker([lat,lon], {id: `mark_${i}`}).addTo(map);
+        map.setView([lat, lon], 10)
+
         document.getElementById('route_steps').innerHTML +=
             `
                 <div id="root_${i}">
                     <div id="coor_${i}" class="coor"></div>
                     <div id="loc_${i}" class="loc"></div>
-                    <img id="ico_${i}" class="icon" src="" alt="icon"></img>
                     <div id="wea_${i}" class="wea"></div>
-                    <a href="" id="det_${i}" class="see_details">See Details</a>
                 </div>
             `;
         
