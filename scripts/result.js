@@ -7,8 +7,8 @@
 */
 const urlSegment = window.location.search;
 const parameters = urlSegment.substring(1).split('&');
-const ori = `${decodeURIComponent(parameters[0].slice(8))},${decodeURIComponent(parameters[1].slice(8))}`; //lat,lon
-const dest = `${decodeURIComponent(parameters[2].slice(8))},${decodeURIComponent(parameters[3].slice(8))}`; //lat,lon
+var ori = `${decodeURIComponent(parameters[0].slice(8))},${decodeURIComponent(parameters[1].slice(8))}`; //lat,lon
+var dest = `${decodeURIComponent(parameters[2].slice(8))},${decodeURIComponent(parameters[3].slice(8))}`; //lat,lon
 var dep = decodeURIComponent(parameters[4].slice(3)); //YYYY-MM-DDThh:mm
 var dep_unix = +new Date(dep); //13 dig number
 
@@ -26,6 +26,20 @@ async function get_route(){
         alert("Sorry, Can't find the route. Go back and try different point")
     }
     const steps = route_data.routes[0].legs[0].steps;
+    steps.unshift({
+        maneuver: {
+            location: [ori.split(',')[1], ori.split(',')[0]]
+        },
+        weight: 0,
+        intersections: []
+    });
+    steps.push({
+        maneuver: {
+            location: [dest.split(',')[1], dest.split(',')[0]]
+        },
+        weight: 0,
+        intersections: []
+    });
 
     show_results(steps);
 }
@@ -33,9 +47,10 @@ async function get_route(){
 // function, for each waypoint to get city/district name, 2500/day & 1/sec
 var address_list = [];
 async function get_name(loc, c, pass_unix){//13 dig num
-    const name_api_key = 'b3bea85fe88146bf89d7c25c7c50f545';
-    //b3bea85fe88146bf89d7c25c7c50f545
-    //b1a8acdec4574fc98ec1b577ab778669
+    const name_api_key = '85b3fdd0d84246c1835761c2448ea9f3';
+    //b3bea85fe88146bf89d7c25c7c50f545 f
+    //b1a8acdec4574fc98ec1b577ab778669 u
+    //85b3fdd0d84246c1835761c2448ea9f3 a
     let name_url = `https://api.opencagedata.com/geocode/v1/json?q=${loc}&key=${name_api_key}&language=en&no_annotations=1&address_only=1&limit=1&no_record=1&abbrv=1`;
     let response_2 = await fetch(name_url, {method: 'GET'})
         .catch(err => console.error(err));
@@ -68,9 +83,16 @@ async function get_name(loc, c, pass_unix){//13 dig num
 
     let address = new_list.reverse().join(',');
     
+    if(c === 0){
+        document.getElementById('tt_ori').textContent += address.replaceAll(',',', ');
+        console.log(waypoints);
+    }else if(c === waypoints-1){
+        document.getElementById('tt_des').textContent += address.replaceAll(',',', ');
+    }
+
     if(!address_list.includes(address)){
         address_list.push(address);
-        document.getElementById(`loc_${c}`).textContent = address;
+        document.getElementById(`loc_${c}`).textContent = address.replaceAll(',',', ');
         get_weather(address, pass_unix, c);
     }else{
         document.getElementById(`root_${c}`).remove();
@@ -156,8 +178,10 @@ async function get_weather(ad, unix, c){//13 dig num
 }
 
 // function to show the final result
+var waypoints;
 function show_results(s){
-    for(let i=0; i<s.length; i++){
+    waypoints = s.length;
+    for(let i=0; i<waypoints; i++){
         let lat = s[i].maneuver.location[1];
         let lon = s[i].maneuver.location[0];
         let duration = (s[i].weight + s[i].intersections.length*3)*1000;
@@ -190,7 +214,15 @@ function show_results(s){
 
 // main function
 window.onload = () => {
-    document.getElementById('par').innerHTML = `${ori.split(',').reverse().toString()}<br>${dest.split(',').reverse().toString()}<br>${dep}`
+    document.getElementById('tt_coords').textContent = `(${ori.split(',').reverse().join(', ')}) to (${dest.split(',').reverse().join(', ')})`;
+
+    document.getElementById('tt_deptime').textContent += new Date(dep_unix).toLocaleString(
+        'en-US', {
+            dateStyle: 'medium',
+            timeStyle: 'medium',
+            hour12: false
+        }
+    )
 
     get_route();
 }
