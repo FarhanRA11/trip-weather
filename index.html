@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>homepage</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="">
+    <script src="script.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+</head>
+<body>
+    <h1>Weather Trip</h1>
+    
+    <div id="map"></div>
+    <button id="btn_myloc">Find My Location</button>
+
+    <form id="input_user" method="get" action="./result">
+        <p>origin:</p>
+        <input 
+            type="text" step="any" pattern="[0-9.-]{1,}"
+            placeholder="latitude" title="latitude"
+            id="coor_ori1" class="query" name="ogn_lat" 
+            required>
+        <input 
+            type="text" step="any" pattern="[0-9.-]{1,}"
+            placeholder="longitude" title="longitude"
+            id="coor_ori2" class="query" name="ogn_lon" 
+            required>
+        
+        <p>destination:</p>
+        <input 
+            type="text" step="any" pattern="[0-9.-]{1,}"
+            placeholder="latitude" title="latitude"
+            id="coor_dest1" class="query" name="dtn_lat" 
+            required>
+        <input 
+            type="text" step="any" pattern="[0-9.-]{1,}"
+            placeholder="longitude" title="longitude"
+            id="coor_dest2" class="query" name="dtn_lon" 
+            required>
+        
+        <p>(ex. -12.345678)</p>
+
+        <p>departure in local time</p>
+        <input 
+            type="datetime-local" 
+            max="" min="" 
+            id="time_dep" class="query" name="dt" 
+            required>
+        <input 
+            type="submit" 
+            id="btn_search" class="query"
+            value="Submit">
+    </form>
+
+    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, molestias! Molestias ad sapiente reprehenderit ab eius suscipit, iusto fugit ducimus porro quidem voluptates numquam tenetur ea totam placeat, praesentium aperiam!</h3>
+
+    <footer>
+        All about this website, source, feature, etc. is in the documentation page. Click this link,
+        <a href="./documentation" id="doc_btn">Documentation</a>
+    </footer>
+</body>
+
+<script>
+    // codeblock to setting up embedded map
+    var map = L.map('map').setView([30, 0], 1);
+    
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    var mark_ori = L.marker([]);
+    var mark_des = L.marker([]);
+</script>
+
+</html>
