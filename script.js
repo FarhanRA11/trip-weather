@@ -31,7 +31,7 @@ function showPosition(position){
 
     console.log(lat, lon);
     map.removeLayer(mark_ori);
-    mark_ori = L.marker([lat, lon]).addTo(map);
+    mark_ori = L.marker([lat, lon]).addTo(map).bindPopup('your position');
 }
 
 function showError(error){
@@ -53,33 +53,56 @@ function showError(error){
 
 function select_coor_ori(){
     map.removeLayer(mark_ori);
-    mark_ori = L.marker([lat, lon]).addTo(map);
+    mark_ori = L.marker([lat, lon]).addTo(map).bindPopup('your origin');
     document.getElementById('coor_ori1').value = lat;
     document.getElementById('coor_ori2').value = lon;
 }
 
 function select_coor_des(){
     map.removeLayer(mark_des);
-    mark_des = L.marker([lat, lon]).addTo(map);
+    mark_des = L.marker([lat, lon]).addTo(map).bindPopup('your destination');
     document.getElementById('coor_dest1').value = lat;
     document.getElementById('coor_dest2').value = lon;
 }
 
 // main function
 window.onload = () => {
+    L.polygon([
+        [91, 180.01],
+        [-91, 180.01],
+        [-91, 1440],
+        [91, 1440]
+    ], {color: 'red'}).addTo(map)
+    L.polygon([
+        [91, -180.01],
+        [-91, -180.01],
+        [-91, -1440],
+        [91, -1440]
+    ], {color: 'red'}).addTo(map)
+
+    var bounds = L.latLngBounds(
+        L.latLng(-90, -180),
+        L.latLng(90, 180)
+    );
+
     // select position on map
     map.on('click', (event) => {
         lat = event.latlng.lat.toFixed(6);
         lon = event.latlng.lng.toFixed(6);
         
-        L.popup().setLatLng(event.latlng).setContent(
-            `
-                ${lat}, ${lon}
-                <div id="option_map">
-                    <button onclick="select_coor_ori()" class="btn_map">Set as Origin</button>
-                    <button onclick="select_coor_des()" class="btn_map">Set as Destination</button>
-                </div>
-        `).openOn(map);
+        if(bounds.contains(L.latLng(lat, lon))){
+            L.popup()
+                .setLatLng(event.latlng)
+                .setContent(
+                    `
+                        ${lat}, ${lon}
+                        <div id="option_map">
+                            <button onclick="select_coor_ori()" class="btn_map">Set as Origin</button>
+                            <button onclick="select_coor_des()" class="btn_map">Set as Destination</button>
+                        </div>
+                `)
+                .openOn(map);
+        }
     });
 
     // Get date 10 day ahead range for routing
