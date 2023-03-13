@@ -23,7 +23,8 @@ async function get_route(){
 
     const route_data = await response_1.json();
     if(route_data.code === 'NoRoute'){
-        alert("Sorry, Can't find the route. Go back and try different point")
+        alert("Sorry, Can't find the route. Go back and try different point");
+        window.location('../');
     }
     const steps = route_data.routes[0].legs[0].steps;
     steps.unshift({
