@@ -14,18 +14,24 @@
     
 </head>
 <body>
+    <div id="title-desc">
+        <h1>Trip Weather</h1>
+        <h4>
+            Welcome to Trip Weather website - the ultimate tool for planning your trips! With our user-friendly interface, you can easily pick your starting and destination points, and it'll take care of the rest.
+        </h4>
+    </div>
+    <div style="height: 130px;"></div>    
 
-    
-
-    <h1>Weather Trip</h1>
     <div id="root_map">
         <div id="map" class="w-75"></div>
-        <button id="btn_myloc">Find My Location</button>
+        <button id="btn_myloc" class="button">Find My Location</button>
+        <h4><i>Click location on the map above or enter the coordinates below</i></h4>
     </div>
+
     
     <div id="root-input-user">
         <form id="input_user" method="get" action="./result">
-            <label for="coor_ori1">Origin:</label>
+            <label for="coor_ori1">Origin*:</label>
             <input 
                 type="text" step="any" pattern="[0-9.-]{1,}"
                 placeholder="latitude" title="latitude"
@@ -37,7 +43,7 @@
                 id="coor_ori2" class="query" name="ogn_lon" 
                 required>
             <br>
-            <label for="coor_ori1">Destination:</label>
+            <label for="coor_ori1">Destination*:</label>
             <input 
                 type="text" step="any" pattern="[0-9.-]{1,}"
                 placeholder="latitude" title="latitude"
@@ -49,9 +55,12 @@
                 id="coor_dest2" class="query" name="dtn_lon" 
                 required>
             
-            <label for="coor_dest2"><i>(ex. -12.345678)</i></label>
+            <label for="coor_dest2"><i>
+                *-90&deg;&#8804;latitude&#8804;90&deg;,&nbsp;-180&deg;&#8804;longitude&#8804;180&deg;<br>
+                *ex. -12.345678
+            </i></label>
             <br>
-            <label for="time_dep">When you going to go?</label>
+            <label for="time_dep">Depart at?</label>
             <input 
                 type="datetime-local" 
                 max="" min="" 
@@ -61,21 +70,16 @@
             <div style="display: flex; justify-content: center;">
                 <input 
                 type="submit" 
-                id="btn_search" class="query"
+                id="btn_search" class="button"
                 value="Find result">
             </div>
             
         </form>
-    </div>
+    </div>      
 
-    
-    <div style="height: 150px;"></div>
-    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, molestias! Molestias ad sapiente reprehenderit ab eius suscipit, iusto fugit ducimus porro quidem voluptates numquam tenetur ea totam placeat, praesentium aperiam!</h3>
-
-    <div style="height: 150px;"></div>
+    <div style="height: 130px;"></div>
     <footer>
-        All about this website, source, feature, etc. is in the documentation page. Click this link,
-        <a href="./documentation" id="doc_btn">Documentation</a>
+        All about this website, source, etc. is in the <a href="documentation" id="doc_btn">Documentation</a> page.
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
