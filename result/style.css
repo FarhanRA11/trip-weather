@@ -6,6 +6,7 @@
     --dark-purple: #490081;
     --lgt-purple: #8685c7;
     --white: #ffe9d1;
+    --black-transparent: #0000004d;
 }
 
 body{
@@ -21,6 +22,21 @@ body{
     background-size: cover;
 }
 
+#btn-top{
+    border-radius: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    background-color: var(--lgt-orange);
+    color: var(--dark-purple);
+    border: none;
+    bottom: 30px;
+    right: 30px;
+    text-decoration: none;
+    padding: 10px;
+}
+
 #title{
     display: flex;
     flex-direction: column;
@@ -32,13 +48,13 @@ body{
     border-radius: 6px;
 }
 
-h1, h3{
-    margin: 10px;
+h2, h5{
+    margin: 5px;
 }
 
 #map{
-    height: 500px;
-    width: 500px;
+    height: 600px;
+    width: 60vw;
     max-width: 1200px;
     margin: 10px;
     border: 3px solid #04aa6d;
@@ -73,14 +89,34 @@ h1, h3{
 }
 
 #route_steps{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 30px;
+    margin-top: 30px;
+    font-size: large;
+    background-color: var(--black-transparent);
+    border-radius: 10px;
+    padding: 40px;
+}
+
+.grid-item{
     display: flex;
     flex-direction: column;
-    margin-top: 30px;
-    row-gap: 30px;
-    font-size: large;
-    background-color: #0000004d;
+    row-gap: 15px;
+    padding: 20px;
+    font-size: 24px;
+    background-color: var(--black-transparent);
     border-radius: 6px;
-    padding: 40px;
+    text-align: center;
+}
+
+.time{
+    font-size: medium;
+}
+
+.wea{
+    text-align: left;
+    font-size: large;
 }
 
 #address{

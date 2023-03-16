@@ -110,7 +110,7 @@ async function get_name(loc, c, pass_unix){//13 dig num
         });
     }
 }
-
+//nexttttt
 // function, for each city/district name to get weather, 1000/day
 const compass = [
     'north', 'north - north east', 'north east', 'east - north east', 'east', 'east - south east', 'south east', 'south - south east', 'south', 'south - south west', 'south west', 'west - south west', 'west', 'west - north west', 'north west', 'north - north west', 'north'
@@ -221,22 +221,28 @@ async function get_weather(ad, unix, c){//13 dig num
 
 
     let weather = `
-        situation: ${text.replaceAll('-', ' ')}
-        <br>rain probability: ${precipprob}%
-        <br>precipitation: ${precip} mm
-        <br>cloud cover: ${cloudcover}%
-        <br>humidity: ${humidity}%
-        <br>snow: ${snow} cm
-        <br>snow depth: ${snowdepth} cm
-        <br>temperature: ${temp}&deg;C
-        <br>feelslike: ${feelslike}&deg;C
-        <br>dewpoint: ${dew}&deg;C
-        <br>wind speed: ${windspeed} km/h
-        <br>wind gust: ${windgust} km/h
-        <br>wind direction: ${winddir}
-        <br>pressure: ${pressure} hPa
-        <br>visibility: ${visibility}km
-        <br>uvindex: ${uvindex}/10
+        <div class="wea-container">
+            <div class="visible">
+                situation: ${text.replaceAll('-', ' ')}
+                <br>rain probability: ${precipprob}%
+                <br>temperature: ${temp}&deg;C
+                <br>wind speed: ${windspeed} km/h
+            </div>
+            <div class="hidden">
+                <br>precipitation: ${precip} mm
+                <br>cloud cover: ${cloudcover}%
+                <br>humidity: ${humidity}%
+                <br>snow: ${snow} cm
+                <br>snow depth: ${snowdepth} cm
+                <br>feelslike: ${feelslike}&deg;C
+                <br>dewpoint: ${dew}&deg;C
+                <br>wind gust: ${windgust} km/h
+                <br>wind direction: ${winddir}
+                <br>pressure: ${pressure} hPa
+                <br>visibility: ${visibility} km
+                <br>uvindex: ${uvindex}/10
+            </div>
+        </div>
         `;
     document.getElementById(`wea_${c}`).innerHTML = weather;
     // bindPopup per button here
@@ -276,16 +282,16 @@ function show_results(s){
 
         document.getElementById('route_steps').innerHTML +=
             `
-                <div id="root_${i}">
-                    <div id="coor_${i}" class="coor"></div>
+                <div id="root_${i}" class="grid-item">
                     <div id="loc_${i}" class="loc"></div>
+                    <i><div id="time_${i}" class="time"></div></i>
                     <div id="wea_${i}" class="wea"></div>
                 </div>
             `;
         
         get_name(`${lat},${lon}`, i, dep_unix)//13 dig num
         
-        document.getElementById(`coor_${i}`).textContent = 
+        document.getElementById(`time_${i}`).textContent = 
             new Date(dep_unix).toLocaleString(
                 'en-US', {
                     dateStyle: 'medium',

@@ -31,7 +31,7 @@
     
     <div id="root-input-user">
         <form id="input_user" method="get" action="./result/index.html">
-            <label for="coor_ori1">Origin*:</label>
+            <label for="coor_ori1">From*:</label>
             <input 
                 type="text" step="any" pattern="[0-9.-]{1,}"
                 placeholder="latitude" title="latitude"
@@ -43,7 +43,7 @@
                 id="coor_ori2" class="query" name="ogn_lon" 
                 required>
             <br>
-            <label for="coor_ori1">Destination*:</label>
+            <label for="coor_ori1">To*:</label>
             <input 
                 type="text" step="any" pattern="[0-9.-]{1,}"
                 placeholder="latitude" title="latitude"
@@ -85,14 +85,6 @@
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 
-    <script type="module">
-        import { re_1, as_f1, as_u2, as_a3, wr_f1, wr_u2 } from './key.js';
-        let data = `${re_1}${as_a3}${wr_u2}`;
-
-        document.getElementById('btn_search').onclick = () => {
-            localStorage.setItem('x', data);
-        }
-    </script>
 </body>
 
 <script>
