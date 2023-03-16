@@ -17,7 +17,7 @@ async function get_route(){
     const fix_ori = ori.split(',').reverse().toString(); //lon,lat
     const fix_dest = dest.split(',').reverse().toString() //lon,lat
 
-    const route_url = `http://router.project-osrm.org/route/v1/driving/${fix_ori};${fix_dest}?overview=false&steps=true`;
+    const route_url = `https://router.project-osrm.org/route/v1/driving/${fix_ori};${fix_dest}?overview=false&steps=true`;
     const response_1 = await fetch(route_url, {method: 'GET'})
         .catch(err => console.error(err));
 
