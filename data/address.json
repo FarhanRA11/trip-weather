@@ -1,0 +1,69 @@
+{
+    "documentation": "https://opencagedata.com/api",
+    "licenses": [
+        {
+            "name": "see attribution guide",
+            "url": "https://opencagedata.com/credits"
+        }
+    ],
+    "rate": {
+        "limit": 2500,
+        "remaining": 2367,
+        "reset": 1679011200
+    },
+    "results": [
+        {
+            "bounds": {
+                "northeast": {
+                    "lat": -7.4836345,
+                    "lng": 110.2341218
+                },
+                "southwest": {
+                    "lat": -7.484064,
+                    "lng": 110.2340539
+                }
+            },
+            "components": {
+                "ISO_3166-1_alpha-2": "ID",
+                "ISO_3166-1_alpha-3": "IDN",
+                "ISO_3166-2": [
+                    "ID-JT"
+                ],
+                "_category": "road",
+                "_type": "road",
+                "city": "Kota Magelang",
+                "continent": "Asia",
+                "country": "Indonesia",
+                "country_code": "id",
+                "postcode": "56125",
+                "road": "Jalan Soekarno Hatta",
+                "road_reference": "26",
+                "road_type": "trunk",
+                "state": "Central Java",
+                "state_code": "JT",
+                "village": "Panjang"
+            },
+            "confidence": 9,
+            "formatted": "Jalan Soekarno Hatta, Kota Magelang 56125, Central Java, Indonesia",
+            "geometry": {
+                "lat": -7.483635,
+                "lng": 110.234054
+            }
+        }
+    ],
+    "status": {
+        "code": 200,
+        "message": "OK"
+    },
+    "stay_informed": {
+        "blog": "https://blog.opencagedata.com",
+        "mastodon": "https://en.osm.town/@opencage",
+        "twitter": "https://twitter.com/OpenCage"
+    },
+    "thanks": "For using an OpenCage API",
+    "timestamp": {
+        "created_http": "Thu, 16 Mar 2023 00:31:44 GMT",
+        "created_unix": 1678926704
+    },
+    "total_results": 1
+}

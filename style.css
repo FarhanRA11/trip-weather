@@ -109,7 +109,7 @@ label{
 }
 
 #time_dep{
-    width: 160px;
+    width: 180px;
 }
 
 .query{
@@ -139,7 +139,7 @@ h4{
 
 footer{
     text-align: center;
-}
+}   
 
 a{
     color: var(--dark-purple);

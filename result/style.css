@@ -1,16 +1,65 @@
-body{
-    scroll-behavior: smooth;
+:root{
+    --blue-sky: #85c8ff;
+    --lgt-orange: #ffc67c;
+    --orange: #dfad6d;
+    --dark-orange: #c2975e;
+    --dark-purple: #490081;
+    --lgt-purple: #8685c7;
+    --white: #ffe9d1;
 }
 
-#map{
-    height: 400px;
-    width: 550px;
+body{
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 30px 50px 30px 50px;
+    color: var(--white);
+
+    background-image: url('../images/bg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#title{
+    display: flex;
+    flex-direction: column;
+    width: 90vw;
+    margin: 0;
+    background-color: #0000004d;
+    padding: 10px 50px 10px 50px;
+    margin: 10px;
+    border-radius: 6px;
+}
+
+h1, h3{
     margin: 10px;
 }
 
+#map{
+    height: 500px;
+    width: 500px;
+    max-width: 1200px;
+    margin: 10px;
+    border: 3px solid #04aa6d;
+    border-radius: 15px;
+}
+
+.leaflet-popup-content-wrapper{
+    width: 250px;
+}
+
 .bindPopup{
+    display: flex !important;
+    flex-direction: column;
+    text-align: center;
+}
+
+.bp-icon-temp{
     display: flex;
     flex-direction: row;
+    justify-content: center;
+    font-size: 40px;
 }
 
 #input_user{
@@ -24,7 +73,14 @@ body{
 }
 
 #route_steps{
+    display: flex;
+    flex-direction: column;
     margin-top: 30px;
+    row-gap: 30px;
+    font-size: large;
+    background-color: #0000004d;
+    border-radius: 6px;
+    padding: 40px;
 }
 
 #address{

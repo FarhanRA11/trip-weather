@@ -27,6 +27,7 @@ async function get_route(){
         window.location('../');
     }
     const steps = route_data.routes[0].legs[0].steps;
+
     steps.unshift({
         maneuver: {
             location: [ori.split(',')[1], ori.split(',')[0]]
@@ -48,15 +49,21 @@ async function get_route(){
 // function, for each waypoint to get city/district name, 2500/day & 1/sec
 var address_list = [];
 async function get_name(loc, c, pass_unix){//13 dig num
+    /* temporary
     const name_api_key = '85b3fdd0d84246c1835761c2448ea9f3';
     //b3bea85fe88146bf89d7c25c7c50f545 f
     //b1a8acdec4574fc98ec1b577ab778669 u
     //85b3fdd0d84246c1835761c2448ea9f3 a
+
     let name_url = `https://api.opencagedata.com/geocode/v1/json?q=${loc}&key=${name_api_key}&language=en&no_annotations=1&address_only=1&limit=1&no_record=1&abbrv=1`;
     let response_2 = await fetch(name_url, {method: 'GET'})
         .catch(err => console.error(err));
 
     let name_data = await response_2.json();
+    */
+
+    const res = await fetch('../data/address.json').catch(err => console.error(err));
+    const name_data = await res.json();
 
     let village = name_data.results[0].components.village;
     let neighbourhood = name_data.results[0].components.neighbourhood;
@@ -86,13 +93,12 @@ async function get_name(loc, c, pass_unix){//13 dig num
     
     if(c === 0){
         document.getElementById('tt_ori').textContent += address.replaceAll(',',', ');
-        console.log(waypoints);
     }else if(c === waypoints-1){
         document.getElementById('tt_des').textContent += address.replaceAll(',',', ');
     }
 
     if(!address_list.includes(address)){
-        address_list.push(address);
+        // address_list.push(address); temporary
         document.getElementById(`loc_${c}`).textContent = address.replaceAll(',',', ');
         get_weather(address, pass_unix, c);
     }else{
@@ -106,7 +112,11 @@ async function get_name(loc, c, pass_unix){//13 dig num
 }
 
 // function, for each city/district name to get weather, 1000/day
+const compass = [
+    'north', 'north - north east', 'north east', 'east - north east', 'east', 'east - south east', 'south east', 'south - south east', 'south', 'south - south west', 'south west', 'west - south west', 'west', 'west - north west', 'north west', 'north - north west', 'north'
+]
 async function get_weather(ad, unix, c){//13 dig num
+    /* temporary
     const weather_api_key = 'C3M5RHSXUYS3EBRA9WCUTY93A';
     //VZL3Q3HAS9A2H7BHMTH7YNLAW f
     //C3M5RHSXUYS3EBRA9WCUTY93A u
@@ -122,36 +132,50 @@ async function get_weather(ad, unix, c){//13 dig num
                         map.removeLayer(layer);
                     }
                 });
-                throw new Error('response was not ok');
+                throw new Error('address not found');
             }
             return response.json();
         })
         .then(data => {
-            data = data.days[0];
+            console.log(data);
+            data = data.currentConditions;
 
-            let cloudcover = data.cloudcover;
-            let dew = data.dew;
-            let feelslike = data.feelslike;
-            let humidity = data.humidity;
-            let icon = data.icon; //
-            let precip = data.precip;
-            let precipprob = data.precipprob; //
-            let pressure = data.pressure;
-            let snow = data.snow;
-            let snowdepth = data.snowdepth;
-            let temp = data.temp; //
-            let uvindex = data.uvindex;
-            let visibility = data.visibility;
-            let winddir = data.winddir;
-            let windgust = data.windgust;
-            let windspeed = data.windspeed; //
+            const cloudcover = data.cloudcover;
+            const dew = data.dew;
+            const feelslike = data.feelslike;
+            const humidity = data.humidity;
+            const text = data.icon; //
+            const precip = data.precip;
+            const precipprob = data.precipprob; //
+            const pressure = data.pressure;
+            const snow = data.snow;
+            const snowdepth = data.snowdepth;
+            const temp = data.temp; //
+            const uvindex = data.uvindex;
+            const visibility = data.visibility;
+            const winddir = compass[Math.round(((data.winddir)%360) / 22.5)];
+            const windgust = data.windgust;
+            const windspeed = data.windspeed; //
 
 
             let weather = `
-                situation: ${icon}, 
-                rain probability: ${precipprob}%, 
-                temperature: ${temp}&degC, 
-                wind: ${windspeed} km/h`
+                situation: ${text.replaceAll('-', ' ')}
+                <br>rain probability: ${precipprob}%
+                <br>precipitation: ${precip} mm
+                <br>cloud cover: ${cloudcover}%
+                <br>humidity: ${humidity}%
+                <br>snow: ${snow} cm
+                <br>snow depth: ${snowdepth} cm
+                <br>temperature: ${temp}&deg;C
+                <br>feelslike: ${feelslike}&deg;C
+                <br>dewpoint: ${dew}&deg;C
+                <br>wind speed: ${windspeed} km/h
+                <br>wind gust: ${windgust} km/h
+                <br>wind direction: ${winddir}
+                <br>pressure: ${pressure} hPa
+                <br>visibility: ${visibility}km
+                <br>uvindex: ${uvindex}/10
+                `;
             document.getElementById(`wea_${c}`).innerHTML = weather;
             // bindPopup per button here
             
@@ -159,7 +183,7 @@ async function get_weather(ad, unix, c){//13 dig num
                 if(layer.options && layer.options.id === `mark_${c}`){
                     layer.bindPopup(`
                     <div class="bindPopup">
-                        <img src="../images/weather_icon/${icon}.png" class="icon" alt="icon">
+                        <img src="../images/weather_icon/${text}.png" class="icon" alt="icon">
                         <div class="temp">${temp}&degC</div>
                         <a class="see_more" href="#root_${c}">See details</a>
                     </div>
@@ -167,17 +191,74 @@ async function get_weather(ad, unix, c){//13 dig num
                 }
             })
         })
-        .catch(error => {
-            console.error("there's problem while fetching data:", error);
+        .catch(err => {
+            console.error("there's problem:", err);
         });
+        end temporary (weather)
+        */
 
-        
+    const res = await fetch('../data/weather.json').catch(err => console.error(err));
+    var data = await res.json();
 
-    // let response_3 = await fetch(weather_url, {method: 'GET'})
-    //     .catch(err => console.error(err));
-    // let weather_data = await response_3.json();
+    data = data.currentConditions;
 
+    const cloudcover = data.cloudcover;
+    const dew = data.dew;
+    const feelslike = data.feelslike;
+    const humidity = data.humidity;
+    const text = data.icon; //
+    const precip = data.precip;
+    const precipprob = data.precipprob; //
+    const pressure = data.pressure;
+    const snow = data.snow;
+    const snowdepth = data.snowdepth;
+    const temp = data.temp; //
+    const uvindex = data.uvindex;
+    const visibility = data.visibility;
+    const winddir = compass[Math.round(((data.winddir)%360) / 22.5)];
+    const windgust = data.windgust;
+    const windspeed = data.windspeed; //
+
+
+    let weather = `
+        situation: ${text.replaceAll('-', ' ')}
+        <br>rain probability: ${precipprob}%
+        <br>precipitation: ${precip} mm
+        <br>cloud cover: ${cloudcover}%
+        <br>humidity: ${humidity}%
+        <br>snow: ${snow} cm
+        <br>snow depth: ${snowdepth} cm
+        <br>temperature: ${temp}&deg;C
+        <br>feelslike: ${feelslike}&deg;C
+        <br>dewpoint: ${dew}&deg;C
+        <br>wind speed: ${windspeed} km/h
+        <br>wind gust: ${windgust} km/h
+        <br>wind direction: ${winddir}
+        <br>pressure: ${pressure} hPa
+        <br>visibility: ${visibility}km
+        <br>uvindex: ${uvindex}/10
+        `;
+    document.getElementById(`wea_${c}`).innerHTML = weather;
+    // bindPopup per button here
     
+    map.eachLayer(layer => {
+        if(layer.options && layer.options.id === `mark_${c}`){
+            layer.bindPopup(`
+            <div class="bindPopup">
+                <div id="bp-ad">
+                    ${ad}
+                </div>
+                <div class="bp-icon-temp">
+                    <img src="../images/weather_icon/${text}.png" class="icon" alt="icon">
+                    <div>${temp}&deg;C</div>
+                </div>
+                <div>
+                    <a class="details" href="#root_${c}">See details</a>
+                </div>
+            </div>
+            `)
+        }
+    })
 }
 
 // function to show the final result
@@ -204,19 +285,27 @@ function show_results(s){
         
         get_name(`${lat},${lon}`, i, dep_unix)//13 dig num
         
-        document.getElementById(`coor_${i}`).innerHTML = 
-            `<br><br>${lat}, ${lon}<br>${new Date(dep_unix).toLocaleString(
+        document.getElementById(`coor_${i}`).textContent = 
+            new Date(dep_unix).toLocaleString(
                 'en-US', {
                     dateStyle: 'medium',
                     timeStyle: 'medium',
                     hour12: false
                 }
-            )}`;
+            );
     }
+}
+
+async function important(){
+    const r = await fetch('../data/default.json').catch(err => console.error(err));
+    const k = await r.json();
+    console.log(k);
 }
 
 // main function
 window.onload = () => {
+    important();
+
     document.getElementById('tt_coords').textContent = `(${ori.split(',').reverse().join(', ')}) to (${dest.split(',').reverse().join(', ')})`;
 
     document.getElementById('tt_deptime').textContent += new Date(dep_unix).toLocaleString(
