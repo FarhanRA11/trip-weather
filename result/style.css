@@ -22,21 +22,6 @@ body{
     background-size: cover;
 }
 
-#btn-top{
-    border-radius: 10%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    background-color: var(--lgt-orange);
-    color: var(--dark-purple);
-    border: none;
-    bottom: 30px;
-    right: 30px;
-    text-decoration: none;
-    padding: 10px;
-}
-
 #title{
     display: flex;
     flex-direction: column;
@@ -48,7 +33,7 @@ body{
     border-radius: 6px;
 }
 
-h2, h5{
+h2, h5, h6{
     margin: 5px;
 }
 
@@ -110,6 +95,10 @@ h2, h5{
     text-align: center;
 }
 
+#address{
+    margin-top: 30px;
+}
+
 .time{
     font-size: medium;
 }
@@ -117,12 +106,31 @@ h2, h5{
 .wea{
     text-align: left;
     font-size: large;
-}
-
-#address{
-    margin-top: 30px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 #weather{
     margin-top: 30px;
+}
+
+.wind-dir{
+    height: 45px;
+    width: 45px;
+}
+
+#btn-top{
+    border-radius: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    background-color: var(--lgt-orange);
+    color: var(--dark-purple);
+    border: none;
+    bottom: 30px;
+    right: 30px;
+    text-decoration: none;
+    padding: 10px;
 }

@@ -16,16 +16,32 @@ var dep_unix = +new Date(dep); //13 dig number
 async function get_route(){
     const fix_ori = ori.split(',').reverse().toString(); //lon,lat
     const fix_dest = dest.split(',').reverse().toString() //lon,lat
-
     const route_url = `https://router.project-osrm.org/route/v1/driving/${fix_ori};${fix_dest}?overview=false&steps=true`;
+
+    fetch(route_url, {method: 'GET'})
+        .then(response => {
+            if(!response.ok){
+                throw new Error('try reload the page.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if(data.code === 'NoRoute'){
+                alert("Sorry, Can't find the route. Go back and try different point");
+                window.location('../');
+            }
+        })
+        .catch(err => {
+            console.error("Problem found, ", err);
+            alert("Problem found, ", err);
+        });
+
+    
     const response_1 = await fetch(route_url, {method: 'GET'})
         .catch(err => console.error(err));
 
     const route_data = await response_1.json();
-    if(route_data.code === 'NoRoute'){
-        alert("Sorry, Can't find the route. Go back and try different point");
-        window.location('../');
-    }
+    
     const steps = route_data.routes[0].legs[0].steps;
 
     steps.unshift({
@@ -112,9 +128,6 @@ async function get_name(loc, c, pass_unix){//13 dig num
 }
 //nexttttt
 // function, for each city/district name to get weather, 1000/day
-const compass = [
-    'north', 'north - north east', 'north east', 'east - north east', 'east', 'east - south east', 'south east', 'south - south east', 'south', 'south - south west', 'south west', 'west - south west', 'west', 'west - north west', 'north west', 'north - north west', 'north'
-]
 async function get_weather(ad, unix, c){//13 dig num
     /* temporary
     const weather_api_key = 'C3M5RHSXUYS3EBRA9WCUTY93A';
@@ -215,21 +228,22 @@ async function get_weather(ad, unix, c){//13 dig num
     const temp = data.temp; //
     const uvindex = data.uvindex;
     const visibility = data.visibility;
-    const winddir = compass[Math.round(((data.winddir)%360) / 22.5)];
+    const winddir = data.winddir;
     const windgust = data.windgust;
     const windspeed = data.windspeed; //
 
 
-    let weather = `
+    let weather = 
+        `
         <div class="wea-container">
             <div class="visible">
-                situation: ${text.replaceAll('-', ' ')}
+                ${text.replaceAll('-', ' ')}
                 <br>rain probability: ${precipprob}%
                 <br>temperature: ${temp}&deg;C
-                <br>wind speed: ${windspeed} km/h
+                <br>wind: <img src="../images/wind-dir.png" class="wind-dir" style="transform:rotate(${winddir}deg);"> ${windspeed} km/h
             </div>
             <div class="hidden">
-                <br>precipitation: ${precip} mm
+                precipitation: ${precip} mm
                 <br>cloud cover: ${cloudcover}%
                 <br>humidity: ${humidity}%
                 <br>snow: ${snow} cm
@@ -237,13 +251,13 @@ async function get_weather(ad, unix, c){//13 dig num
                 <br>feelslike: ${feelslike}&deg;C
                 <br>dewpoint: ${dew}&deg;C
                 <br>wind gust: ${windgust} km/h
-                <br>wind direction: ${winddir}
                 <br>pressure: ${pressure} hPa
                 <br>visibility: ${visibility} km
                 <br>uvindex: ${uvindex}/10
             </div>
         </div>
         `;
+        
     document.getElementById(`wea_${c}`).innerHTML = weather;
     // bindPopup per button here
     
@@ -283,10 +297,10 @@ function show_results(s){
         document.getElementById('route_steps').innerHTML +=
             `
                 <div id="root_${i}" class="grid-item">
-                    <div id="loc_${i}" class="loc"></div>
+                    <b><div id="loc_${i}" class="loc"></div></b>
                     <i><div id="time_${i}" class="time"></div></i>
                     <div id="wea_${i}" class="wea"></div>
-                </div>
+                    </div>
             `;
         
         get_name(`${lat},${lon}`, i, dep_unix)//13 dig num
