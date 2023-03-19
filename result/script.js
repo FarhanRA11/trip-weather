@@ -80,19 +80,21 @@ async function get_name(loc, c, pass_unix){//13 dig num
 
     const res = await fetch('../data/address.json').catch(err => console.error(err));
     const name_data = await res.json();
+    const data = name_data.results[0].components;
 
-    let village = name_data.results[0].components.village;
-    let neighbourhood = name_data.results[0].components.neighbourhood;
-    let quarter = name_data.results[0].components.quarter;
-    let suburb = name_data.results[0].components.suburb;
-    let city_district = name_data.results[0].components.city_district;
-    let city = name_data.results[0].components.city;
-    let county = name_data.results[0].components.county;
-    let state_district = name_data.results[0].components.state_district;
-    let state = name_data.results[0].components.state;
-    let country = name_data.results[0].components.country;
+    let village = data.village;
+    let neighbourhood = data.neighbourhood;
+    let quarter = data.quarter;
+    let suburb = data.suburb;
+    let town = data.town;
+    let city_district = data.city_district;
+    let city = data.city;
+    let county = data.county;
+    let state_district = data.state_district;
+    let state = data.state;
+    let country = data.country;
 
-    const list = [country, state, state_district, county, city, city_district, suburb, quarter, neighbourhood, village];
+    const list = [country, state, state_district, county, city, city_district, town, suburb, quarter, neighbourhood, village];
     let pattern = /[^a-zA-Z0-9().,"'\/\s]/;
     var new_list = [];
     
@@ -259,21 +261,29 @@ async function get_weather(ad, unix, c){//13 dig num
         `;
         
     document.getElementById(`wea_${c}`).innerHTML = weather;
-    // bindPopup per button here
     
+    // bindPopup per button here
+    const time = new Date(unix).toLocaleString(
+        'en-US', {
+            dateStyle: 'medium',
+            timeStyle: 'medium',
+            hour12: false
+        }
+    );
     map.eachLayer(layer => {
         if(layer.options && layer.options.id === `mark_${c}`){
             layer.bindPopup(`
             <div class="bindPopup">
                 <div id="bp-ad">
-                    ${ad}
+                    <b>${ad}</b><br>
+                    <i>${time}</i>
                 </div>
                 <div class="bp-icon-temp">
                     <img src="../images/weather_icon/${text}.png" class="icon" alt="icon">
                     <div>${temp}&deg;C</div>
                 </div>
                 <div>
-                    <a class="details" href="#root_${c}">See details</a>
+                    <a class="details" href="#root_${c}">See weather details</a>
                 </div>
             </div>
             `)
@@ -300,7 +310,7 @@ function show_results(s){
                     <b><div id="loc_${i}" class="loc"></div></b>
                     <i><div id="time_${i}" class="time"></div></i>
                     <div id="wea_${i}" class="wea"></div>
-                    </div>
+                </div>
             `;
         
         get_name(`${lat},${lon}`, i, dep_unix)//13 dig num
@@ -335,6 +345,19 @@ window.onload = () => {
             hour12: false
         }
     )
+    
+    L.polygon([
+        [91, 180.01],
+        [-91, 180.01],
+        [-91, 1440],
+        [91, 1440]
+    ], {color: 'red'}).addTo(map)
+    L.polygon([
+        [91, -180.01],
+        [-91, -180.01],
+        [-91, -1440],
+        [91, -1440]
+    ], {color: 'red'}).addTo(map)
 
     get_route();
 }
