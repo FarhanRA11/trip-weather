@@ -239,23 +239,23 @@ async function get_weather(ad, unix, c){//13 dig num
         `
         <div class="wea-container">
             <div class="visible">
-                ${text.replaceAll('-', ' ')}
-                <br>rain probability: ${precipprob}%
-                <br>temperature: ${temp}&deg;C
-                <br>wind: <img src="../images/wind-dir.png" class="wind-dir" style="transform:rotate(${winddir}deg);"> ${windspeed} km/h
+                <span>Condition: </span>${text.replaceAll('-', ' ')}
+                <br><span>Rain Probability: </span>${precipprob}%
+                <br><span>Temperature: </span>${temp}&deg;C
+                <br><span>Wind: </span><img src="../images/wind-dir.png" class="wind-dir" style="transform:rotate(${winddir}deg);"> ${windspeed} km/h
             </div>
             <div class="hidden">
-                precipitation: ${precip} mm
-                <br>cloud cover: ${cloudcover}%
-                <br>humidity: ${humidity}%
-                <br>snow: ${snow} cm
-                <br>snow depth: ${snowdepth} cm
-                <br>feelslike: ${feelslike}&deg;C
-                <br>dewpoint: ${dew}&deg;C
-                <br>wind gust: ${windgust} km/h
-                <br>pressure: ${pressure} hPa
-                <br>visibility: ${visibility} km
-                <br>uvindex: ${uvindex}/10
+                <span>Precipitation: </span>${precip} mm
+                <br><span>Cloud cover: </span>${cloudcover}%
+                <br><span>Humidity: </span>${humidity}%
+                <br><span>Snow: </span>${snow} cm
+                <br><span>Snow depth: </span>${snowdepth} cm
+                <br><span>Feelslike: </span>${feelslike}&deg;C
+                <br><span>Dewpoint: </span>${dew}&deg;C
+                <br><span>Wind gust: </span>${windgust} km/h
+                <br><span>Pressure: </span>${pressure} hPa
+                <br><span>Visibility: </span>${visibility} km
+                <br><span>Uvindex: </span>${uvindex}/10
             </div>
         </div>
         `;
