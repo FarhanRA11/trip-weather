@@ -12,11 +12,46 @@ var dest = `${decodeURIComponent(parameters[2].slice(8))},${decodeURIComponent(p
 var dep = decodeURIComponent(parameters[4].slice(3)); //YYYY-MM-DDThh:mm
 var dep_unix = +new Date(dep); //13 dig number
 
+// declare costom marker
+var redIcon = L.icon({
+    iconUrl: '../images/markers/red-icon.png',
+    shadowUrl: '../images/markers/shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    shadowSize: [41, 41],
+    shadowAnchor: [12, 41],
+    popupAnchor: [0, -40]
+});
+
+var greenIcon = L.icon({
+    iconUrl: '../images/markers/green-icon.png',
+    shadowUrl: '../images/markers/shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    shadowSize: [41, 41],
+    shadowAnchor: [12, 41],
+    popupAnchor: [0, -40]
+});
+
+var blueIcon = L.icon({
+    iconUrl: '../images/markers/blue-icon.png',
+    shadowUrl: '../images/markers/shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    shadowSize: [41, 41],
+    shadowAnchor: [12, 41],
+    popupAnchor: [0, -40]
+});
+
+// not yet fixed
+
+
 // function to get route from origin and destination, no limit
-async function get_route(){
+async function get_route(rk){
+    console.log(rk.re[0]) //test
     const fix_ori = ori.split(',').reverse().toString(); //lon,lat
     const fix_dest = dest.split(',').reverse().toString() //lon,lat
-    const route_url = `https://router.project-osrm.org/route/v1/driving/${fix_ori};${fix_dest}?overview=false&steps=true`;
+    const route_url = `https://router.project-osrm.org/route/v1/driving/${fix_ori};${fix_dest}?overview=full&steps=true&annotations=true&alternatives=true`;
 
     fetch(route_url, {method: 'GET'})
         .then(response => {
@@ -30,54 +65,46 @@ async function get_route(){
                 alert("Sorry, Can't find the route. Go back and try different point");
                 window.location('../');
             }
+
+            console.log(data);
+            data = data.routes[0].legs[0].steps;
+            
+            data.unshift({
+                maneuver: {
+                    location: [ori.split(',')[1], ori.split(',')[0]]
+                },
+                weight: 0,
+                distance: 0.1,
+                intersections: [
+                    {
+                        location: [ori.split(',')[1], ori.split(',')[0]]
+                    }
+                ]
+            }); 
+            data.push({
+                maneuver: {
+                    location: [dest.split(',')[1], dest.split(',')[0]]
+                },
+                weight: 0,
+                distance: 0.1,
+                intersections: [
+                    {
+                        location: [dest.split(',')[1], dest.split(',')[0]]
+                    }
+                ]
+            });
+        
+            show_results(data, rk);
         })
         .catch(err => {
             console.error("Problem found, ", err);
-            alert("Problem found, ", err);
         });
-
-    
-    const response_1 = await fetch(route_url, {method: 'GET'})
-        .catch(err => console.error(err));
-
-    const route_data = await response_1.json();
-    
-    const steps = route_data.routes[0].legs[0].steps;
-
-    steps.unshift({
-        maneuver: {
-            location: [ori.split(',')[1], ori.split(',')[0]]
-        },
-        weight: 0,
-        intersections: []
-    });
-    steps.push({
-        maneuver: {
-            location: [dest.split(',')[1], dest.split(',')[0]]
-        },
-        weight: 0,
-        intersections: []
-    });
-
-    show_results(steps);
 }
 
 // function, for each waypoint to get city/district name, 2500/day & 1/sec
 var address_list = [];
-async function get_name(loc, c, pass_unix){//13 dig num
-    /* temporary
-    const name_api_key = '85b3fdd0d84246c1835761c2448ea9f3';
-    //b3bea85fe88146bf89d7c25c7c50f545 f
-    //b1a8acdec4574fc98ec1b577ab778669 u
-    //85b3fdd0d84246c1835761c2448ea9f3 a
-
-    let name_url = `https://api.opencagedata.com/geocode/v1/json?q=${loc}&key=${name_api_key}&language=en&no_annotations=1&address_only=1&limit=1&no_record=1&abbrv=1`;
-    let response_2 = await fetch(name_url, {method: 'GET'})
-        .catch(err => console.error(err));
-
-    let name_data = await response_2.json();
-    */
-
+async function get_name(loc, c, pass_unix, code, rk){//13 dig num
+    console.log(rk.as[0]) //test
     const res = await fetch('../data/address.json').catch(err => console.error(err));
     const name_data = await res.json();
     const data = name_data.results[0].components;
@@ -115,103 +142,22 @@ async function get_name(loc, c, pass_unix){//13 dig num
         document.getElementById('tt_des').textContent += address.replaceAll(',',', ');
     }
 
-    if(!address_list.includes(address)){
-        // address_list.push(address); temporary
-        document.getElementById(`loc_${c}`).textContent = address.replaceAll(',',', ');
-        get_weather(address, pass_unix, c);
+    if(!address_list.includes(address) || c === waypoints-1){
+        document.getElementById(`loc_${code}`).textContent = address.replaceAll(',',', ');
+        get_weather(address, pass_unix, c, code, rk);
     }else{
-        document.getElementById(`root_${c}`).remove();
+        document.getElementById(`root_${code}`).remove();
         map.eachLayer(layer => {
-            if(layer.options && layer.options.id === `mark_${c}`){
+            if(layer.options && layer.options.id === `mark_${code}`){
                 map.removeLayer(layer);
             }
         });
     }
 }
-//nexttttt
+
 // function, for each city/district name to get weather, 1000/day
-async function get_weather(ad, unix, c){//13 dig num
-    /* temporary
-    const weather_api_key = 'C3M5RHSXUYS3EBRA9WCUTY93A';
-    //VZL3Q3HAS9A2H7BHMTH7YNLAW f
-    //C3M5RHSXUYS3EBRA9WCUTY93A u
-    let weather_url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${ad}/${Math.round(unix/Math.pow(10,3))}?unitGroup=metric&key=${weather_api_key}&include=current&iconSet=icons2&contentType=json&elements=cloudcover,dew,feelslike,humidity,icon,precip,precipprob,pressure,snow,snowdepth,temp,uvindex,visibility,winddir,windgust,windspeed`;
-
-
-    fetch(weather_url, {method: 'GET'})
-        .then(response => {
-            if(!response.ok){
-                document.getElementById(`root_${c}`).remove();
-                map.eachLayer((layer) => {
-                    if(layer.options && layer.options.id === `mark_${c}`){
-                        map.removeLayer(layer);
-                    }
-                });
-                throw new Error('address not found');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log(data);
-            data = data.currentConditions;
-
-            const cloudcover = data.cloudcover;
-            const dew = data.dew;
-            const feelslike = data.feelslike;
-            const humidity = data.humidity;
-            const text = data.icon; //
-            const precip = data.precip;
-            const precipprob = data.precipprob; //
-            const pressure = data.pressure;
-            const snow = data.snow;
-            const snowdepth = data.snowdepth;
-            const temp = data.temp; //
-            const uvindex = data.uvindex;
-            const visibility = data.visibility;
-            const winddir = compass[Math.round(((data.winddir)%360) / 22.5)];
-            const windgust = data.windgust;
-            const windspeed = data.windspeed; //
-
-
-            let weather = `
-                situation: ${text.replaceAll('-', ' ')}
-                <br>rain probability: ${precipprob}%
-                <br>precipitation: ${precip} mm
-                <br>cloud cover: ${cloudcover}%
-                <br>humidity: ${humidity}%
-                <br>snow: ${snow} cm
-                <br>snow depth: ${snowdepth} cm
-                <br>temperature: ${temp}&deg;C
-                <br>feelslike: ${feelslike}&deg;C
-                <br>dewpoint: ${dew}&deg;C
-                <br>wind speed: ${windspeed} km/h
-                <br>wind gust: ${windgust} km/h
-                <br>wind direction: ${winddir}
-                <br>pressure: ${pressure} hPa
-                <br>visibility: ${visibility}km
-                <br>uvindex: ${uvindex}/10
-                `;
-            document.getElementById(`wea_${c}`).innerHTML = weather;
-            // bindPopup per button here
-            
-            map.eachLayer(layer => {
-                if(layer.options && layer.options.id === `mark_${c}`){
-                    layer.bindPopup(`
-                    <div class="bindPopup">
-                        <img src="../images/weather_icon/${text}.png" class="icon" alt="icon">
-                        <div class="temp">${temp}&degC</div>
-                        <a class="see_more" href="#root_${c}">See details</a>
-                    </div>
-                    `)
-                }
-            })
-        })
-        .catch(err => {
-            console.error("there's problem:", err);
-        });
-        end temporary (weather)
-        */
-
+async function get_weather(ad, unix, c, code, rk){//13 dig num
+    console.log(rk.wr[0]) //test
     const res = await fetch('../data/weather.json').catch(err => console.error(err));
     var data = await res.json();
 
@@ -260,7 +206,7 @@ async function get_weather(ad, unix, c){//13 dig num
         </div>
         `;
         
-    document.getElementById(`wea_${c}`).innerHTML = weather;
+    document.getElementById(`wea_${code}`).innerHTML = weather;
     
     // bindPopup per button here
     const time = new Date(unix).toLocaleString(
@@ -271,7 +217,7 @@ async function get_weather(ad, unix, c){//13 dig num
         }
     );
     map.eachLayer(layer => {
-        if(layer.options && layer.options.id === `mark_${c}`){
+        if(layer.options && layer.options.id === `mark_${code}`){
             layer.bindPopup(`
             <div class="bindPopup">
                 <div id="bp-ad">
@@ -283,7 +229,7 @@ async function get_weather(ad, unix, c){//13 dig num
                     <div>${temp}&deg;C</div>
                 </div>
                 <div>
-                    <a class="details" href="#root_${c}">See weather details</a>
+                    <a class="details" href="#root_${code}">See weather details</a>
                 </div>
             </div>
             `)
@@ -293,49 +239,71 @@ async function get_weather(ad, unix, c){//13 dig num
 
 // function to show the final result
 var waypoints;
-function show_results(s){
+var lat2 = ori.split(',')[0];
+var lon2 = ori.split(',')[1];
+var counter = 0;
+
+function show_results(s, rk){
     waypoints = s.length;
     for(let i=0; i<waypoints; i++){
-        let lat = s[i].maneuver.location[1];
-        let lon = s[i].maneuver.location[0];
-        let duration = (s[i].weight + s[i].intersections.length*3)*1000;
-        dep_unix += duration;
+        let total_duration = s[i].weight*1000;
+        let partial_duration = total_duration/s[i].intersections.length;
 
-        L.marker([lat,lon], {id: `mark_${i}`}).addTo(map);
-        map.setView([lat, lon], 10)
-
-        document.getElementById('route_steps').innerHTML +=
-            `
-                <div id="root_${i}" class="grid-item">
-                    <b><div id="loc_${i}" class="loc"></div></b>
-                    <i><div id="time_${i}" class="time"></div></i>
-                    <div id="wea_${i}" class="wea"></div>
-                </div>
-            `;
-        
-        get_name(`${lat},${lon}`, i, dep_unix)//13 dig num
-        
-        document.getElementById(`time_${i}`).textContent = 
-            new Date(dep_unix).toLocaleString(
-                'en-US', {
-                    dateStyle: 'medium',
-                    timeStyle: 'medium',
-                    hour12: false
+        for(let j=0; j<s[i].intersections.length; j++){
+            let code = `${i}/${j}`
+            let x = s[i].intersections[j].location[1];
+            let y = s[i].intersections[j].location[0];
+            let dist = Math.sqrt((x-lat2)**2 + (y-lon2)**2, 2)
+            dep_unix += partial_duration;
+            
+            if(dist >= 0.04 || i === 0 || i === waypoints-1){ // 1km --> 0.009
+                lat2 = x;
+                lon2 = y;
+                counter++
+                console.log(counter)
+                if(i === 0){
+                    L.marker([lat2,lon2], {
+                        id: `mark_${code}`,
+                        icon: redIcon
+                    }).addTo(map);
+                }else if(i === waypoints-1){
+                    L.marker([lat2,lon2], {
+                        id: `mark_${code}`,
+                        icon: blueIcon
+                    }).addTo(map);
+                    map.setView([lat2, lon2], 10)
+                }else{
+                    L.marker([lat2,lon2], {
+                        id: `mark_${code}`,
+                        icon: greenIcon
+                    }).addTo(map);
                 }
-            );
-    }
-}
 
-async function important(){
-    const r = await fetch('../data/default.json').catch(err => console.error(err));
-    const k = await r.json();
-    console.log(k);
+                document.getElementById('route_steps').innerHTML +=
+                `
+                    <div id="root_${code}" class="grid-item">
+                        <b><div id="loc_${code}" class="loc"></div></b>
+                        <i><div id="time_${code}" class="time"></div></i>
+                        <div id="wea_${code}" class="wea"></div>
+                    </div>
+                `;
+                
+                get_name(`${lat2},${lon2}`, i, dep_unix, code, rk); //13 dig num
+            }            
+        }
+    }
+
+    document.getElementById('tt_deptime').innerHTML += ` to ${
+        new Date(dep_unix).toLocaleString('en-US', {
+                dateStyle: 'medium',
+                timeStyle: 'medium',
+                hour12: false
+            })
+    }`
 }
 
 // main function
 window.onload = () => {
-    important();
-
     document.getElementById('tt_coords').textContent = `(${ori.split(',').reverse().join(', ')}) to (${dest.split(',').reverse().join(', ')})`;
 
     document.getElementById('tt_deptime').textContent += new Date(dep_unix).toLocaleString(
@@ -359,5 +327,7 @@ window.onload = () => {
         [91, -1440]
     ], {color: 'red'}).addTo(map)
 
-    get_route();
+    fetch('../data/default.json', {method: 'GET'})
+        .then(r => r.json())
+        .then(res => get_route(res))
 }

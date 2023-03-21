@@ -29,9 +29,8 @@ function showPosition(position){
     document.getElementById('coor_ori1').value = lat;
     document.getElementById('coor_ori2').value = lon;
 
-    console.log(lat, lon);
     map.removeLayer(mark_ori);
-    mark_ori = L.marker([lat, lon]).addTo(map).bindPopup('your position');
+    mark_ori = L.marker([lat, lon], {icon: redIcon}).addTo(map).bindPopup('Your Location');
 }
 
 function showError(error){
@@ -51,16 +50,40 @@ function showError(error){
     }
 }
 
+// declare costom marker
+var redIcon = L.icon({
+    iconUrl: 'images/markers/red-icon.png',
+    shadowUrl: 'images/markers/shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    shadowSize: [41, 41],
+    shadowAnchor: [12, 41],
+    popupAnchor: [0, -40]
+});
+
+var blueIcon = L.icon({
+    iconUrl: 'images/markers/blue-icon.png',
+    shadowUrl: 'images/markers/shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    shadowSize: [41, 41],
+    shadowAnchor: [12, 41],
+    popupAnchor: [0, -40]
+});
+
+// popup function
 function select_coor_ori(){
     map.removeLayer(mark_ori);
-    mark_ori = L.marker([lat, lon]).addTo(map).bindPopup('your origin');
+    mark_ori = L.marker([lat, lon], {icon: redIcon}).addTo(map).bindPopup('Starting Point');
+    map.closePopup();
     document.getElementById('coor_ori1').value = lat;
     document.getElementById('coor_ori2').value = lon;
 }
 
 function select_coor_des(){
     map.removeLayer(mark_des);
-    mark_des = L.marker([lat, lon]).addTo(map).bindPopup('your destination');
+    mark_des = L.marker([lat, lon], {icon: blueIcon}).addTo(map).bindPopup('Destination Point');
+    map.closePopup();
     document.getElementById('coor_dest1').value = lat;
     document.getElementById('coor_dest2').value = lon;
 }

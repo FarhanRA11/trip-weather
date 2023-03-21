@@ -23,6 +23,7 @@ body{
     align-items: center;
     margin: 30px 50px 30px 50px;
     color: var(--white);
+    row-gap: 150px;
 
     background-image: url('../images/bg.png');
     background-repeat: no-repeat;
@@ -40,7 +41,7 @@ body{
     border-radius: 6px;
 }
 
-h2, h5, h6{
+h2, h4, h5{
     margin: 5px;
 }
 
@@ -50,7 +51,7 @@ h2, h5, h6{
 
 #map{
     height: 600px;
-    width: 60vw;
+    width: 80vw;
     max-width: 1200px;
     margin: 10px;
     border: 3px solid #04aa6d;
@@ -156,4 +157,8 @@ span{
     right: 30px;
     text-decoration: none;
     padding: 10px;
+}
+
+#doc_btn{
+    background-color: var(--grey);
 }
