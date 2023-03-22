@@ -21,12 +21,13 @@
     <div id="root_map">
         <div id="map"></div>
         <button id="btn_myloc" class="button">Find My Location</button>
-        <i>Click location on the map above or enter the coordinates below</i>
+        <label for="root_map"><i style="font-size: 15px;">Click location on the map above or enter the coordinates below</i></label>
+        
     </div>
 
     
     <div id="root-input-user">
-        <form id="input_user" method="get" action="./result/index.html">
+        <form id="input_user" method="get" action="./result/">
             <label for="coor_ori1">From*:</label>
             <input 
                 type="text" step="any" pattern="[0-9.-]{1,}"

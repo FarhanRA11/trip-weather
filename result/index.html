@@ -5,11 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Route Data</title>
-    <link rel="icon" href="">
+    <link rel="shortcut icon" href="../images/icon.ico">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <a href="#map" id="btn-top" class="button">back to map</a>
+
     <div id="title">
         <h2 id="tt_ori">From: </h2>
         <h2 id="tt_des">To: </h2>
@@ -18,14 +20,15 @@
         <h4 id="tt_deptime"></h4>
     </div>
 
-    <div id="map"></div>
+    <div id="root_map">
+        <div id="map"></div>
+        <label for="map"><i style="font-size: 15px;">Click on each waypoint to see weather forecast</i></label>
+    </div>
     <div id="route_steps" class="grid-container"></div>
 
     <footer>
         All about this website, source, etc. is in the <a href="../documentation" id="doc_btn">Documentation</a> page.
     </footer>
-
-    <a href="#map" id="btn-top">back to map</a>
     
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
     <script>

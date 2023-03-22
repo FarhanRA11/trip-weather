@@ -31,6 +31,7 @@ function showPosition(position){
 
     map.removeLayer(mark_ori);
     mark_ori = L.marker([lat, lon], {icon: redIcon}).addTo(map).bindPopup('Your Location');
+    map.setView([lat, lon], 10);
 }
 
 function showError(error){
