@@ -192,16 +192,16 @@ async function get_weather(ad, unix, c, code, rk){//13 dig num
             </div>
             <div class="hidden">
                 <span>Precipitation: </span>${precip} mm
-                <br><span>Cloud cover: </span>${cloudcover}%
+                <br><span>Cloud Cover: </span>${cloudcover}%
                 <br><span>Humidity: </span>${humidity}%
                 <br><span>Snow: </span>${snow} cm
-                <br><span>Snow depth: </span>${snowdepth} cm
+                <br><span>Snow Depth: </span>${snowdepth} cm
                 <br><span>Feelslike: </span>${feelslike}&deg;C
                 <br><span>Dewpoint: </span>${dew}&deg;C
-                <br><span>Wind gust: </span>${windgust} km/h
+                <br><span>Wind Gust: </span>${windgust} km/h
                 <br><span>Pressure: </span>${pressure} hPa
                 <br><span>Visibility: </span>${visibility} km
-                <br><span>Uvindex: </span>${uvindex}/10
+                <br><span>UV Index: </span>${uvindex}
             </div>
         </div>
         `;
@@ -254,9 +254,9 @@ function show_results(s, rk){
             let x = s[i].intersections[j].location[1];
             let y = s[i].intersections[j].location[0];
             let dist = Math.sqrt((x-lat2)**2 + (y-lon2)**2, 2)
-            dep_unix += partial_duration;
+            dep_unix += (partial_duration + 5*1000); // 5s per intersections
             
-            if(dist >= 0.04 || i === 0 || i === waypoints-1){ // 1km --> 0.009
+            if(dist >= 0.02 || i === 0 || i === waypoints-1){ // 1km --> 0.009
                 lat2 = x;
                 lon2 = y;
                 counter++
@@ -288,6 +288,13 @@ function show_results(s, rk){
                     </div>
                 `;
                 
+                document.getElementById(`time_${code}`).textContent = 
+                    new Date(dep_unix).toLocaleString('en-US', {
+                        dateStyle: 'medium',
+                        timeStyle: 'medium',
+                        hour12: false
+                    })
+
                 get_name(`${lat2},${lon2}`, i, dep_unix, code, rk); //13 dig num
             }            
         }
