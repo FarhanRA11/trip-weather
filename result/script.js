@@ -7,13 +7,27 @@
 */
 const urlSegment = window.location.search;
 const parameters = urlSegment.substring(1).split('&');
-var ori = `${decodeURIComponent(parameters[0].slice(8))},${decodeURIComponent(parameters[1].slice(8))}`; //lat,lon
-var dest = `${decodeURIComponent(parameters[2].slice(8))},${decodeURIComponent(parameters[3].slice(8))}`; //lat,lon
-var dep = decodeURIComponent(parameters[4].slice(3)); //YYYY-MM-DDThh:mm
+const ori = `${decodeURIComponent(parameters[0].slice(8))},${decodeURIComponent(parameters[1].slice(8))}`; //lat,lon
+const dest = `${decodeURIComponent(parameters[2].slice(8))},${decodeURIComponent(parameters[3].slice(8))}`; //lat,lon
+const dep = decodeURIComponent(parameters[4].slice(3)); //YYYY-MM-DDThh:mm
 var dep_unix = +new Date(dep); //13 dig number
+const min = new Date(Date.now()).getMinutes();
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBp1U9X57a-whj7dwR0EiK1vU8ASl5cep4",
+    authDomain: "trip-weather-2eb1e.firebaseapp.com",
+    databaseURL: "https://trip-weather-2eb1e-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "trip-weather-2eb1e",
+    storageBucket: "trip-weather-2eb1e.appspot.com",
+    messagingSenderId: "779746910333",
+    appId: "1:779746910333:web:e1f5976267d8355444d114",
+    measurementId: "G-M7516H1K0W"
+};
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
 // declare costom marker
-var redIcon = L.icon({
+const redIcon = L.icon({
     iconUrl: '../images/markers/red-icon.png',
     shadowUrl: '../images/markers/shadow.png',
     iconSize: [25, 41],
@@ -23,7 +37,7 @@ var redIcon = L.icon({
     popupAnchor: [0, -40]
 });
 
-var greenIcon = L.icon({
+const greenIcon = L.icon({
     iconUrl: '../images/markers/green-icon.png',
     shadowUrl: '../images/markers/shadow.png',
     iconSize: [25, 41],
@@ -33,7 +47,7 @@ var greenIcon = L.icon({
     popupAnchor: [0, -40]
 });
 
-var blueIcon = L.icon({
+const blueIcon = L.icon({
     iconUrl: '../images/markers/blue-icon.png',
     shadowUrl: '../images/markers/shadow.png',
     iconSize: [25, 41],
@@ -43,12 +57,9 @@ var blueIcon = L.icon({
     popupAnchor: [0, -40]
 });
 
-// not yet fixed
-
-
 // function to get route from origin and destination, no limit
 async function get_route(rk){
-    console.log(rk.re[0]) //test
+    console.log(rk.re[min%1]) //test
     const fix_ori = ori.split(',').reverse().toString(); //lon,lat
     const fix_dest = dest.split(',').reverse().toString() //lon,lat
     const route_url = `https://router.project-osrm.org/route/v1/driving/${fix_ori};${fix_dest}?overview=full&steps=true&annotations=true&alternatives=true`;
@@ -104,7 +115,7 @@ async function get_route(rk){
 // function, for each waypoint to get city/district name, 2500/day & 1/sec
 var address_list = [];
 async function get_name(loc, c, pass_unix, code, rk){//13 dig num
-    console.log(rk.as[0]) //test
+    console.log(rk.as[min%3]) //test
     const res = await fetch('../data/address.json').catch(err => console.error(err));
     const name_data = await res.json();
     const data = name_data.results[0].components;
@@ -157,7 +168,7 @@ async function get_name(loc, c, pass_unix, code, rk){//13 dig num
 
 // function, for each city/district name to get weather, 1000/day
 async function get_weather(ad, unix, c, code, rk){//13 dig num
-    console.log(rk.wr[0]) //test
+    console.log(rk.wr[min%2]) //test
     const res = await fetch('../data/weather.json').catch(err => console.error(err));
     var data = await res.json();
 
@@ -241,9 +252,8 @@ async function get_weather(ad, unix, c, code, rk){//13 dig num
 var waypoints;
 var lat2 = ori.split(',')[0];
 var lon2 = ori.split(',')[1];
-var counter = 0;
 
-function show_results(s, rk){
+function show_results(s, pass_rk){
     waypoints = s.length;
     for(let i=0; i<waypoints; i++){
         let total_duration = s[i].weight*1000;
@@ -259,8 +269,7 @@ function show_results(s, rk){
             if(dist >= 0.02 || i === 0 || i === waypoints-1){ // 1km --> 0.009
                 lat2 = x;
                 lon2 = y;
-                counter++
-                console.log(counter)
+
                 if(i === 0){
                     L.marker([lat2,lon2], {
                         id: `mark_${code}`,
@@ -295,7 +304,7 @@ function show_results(s, rk){
                         hour12: false
                     })
 
-                get_name(`${lat2},${lon2}`, i, dep_unix, code, rk); //13 dig num
+                get_name(`${lat2},${lon2}`, i, dep_unix, code, pass_rk); //13 dig num
             }            
         }
     }
@@ -334,7 +343,9 @@ window.onload = () => {
         [91, -1440]
     ], {color: 'red'}).addTo(map)
 
-    fetch('../data/default.json', {method: 'GET'})
-        .then(r => r.json())
-        .then(res => get_route(res))
+    var ref = database.ref(`k`);
+    ref.once('value', function(snapshot) {
+        let key = snapshot.val();
+        get_route(key)
+    });
 }

@@ -21,6 +21,7 @@ body{
     margin: 30px 50px 30px 50px;
     color: var(--white);
     background-image: url('images/bg.png');
+    row-gap: 150px;
 
     background-repeat: no-repeat;
     background-size: cover;
@@ -44,10 +45,6 @@ h1{
     justify-content: center;
     align-content: center;
     margin-bottom: 0;
-}
-
-.space{
-    height: 130px;
 }
 
 #root_map{
@@ -180,14 +177,11 @@ a{
 @media only screen and (max-width: 900px){
     body{
         margin: 30px 0 30px 0;
+        row-gap: 80px;
     }
 
     #title-desc{
         flex-direction: column;
-    }
-
-    .space{
-        height: 80px;
     }
 
     #map{

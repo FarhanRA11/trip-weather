@@ -16,7 +16,6 @@
             Welcome to Trip Weather website - the ultimate tool for planning your trips! With user-friendly interface, you can easily pick your starting and destination points, and it'll take care of the rest.
         </h4>
     </div>
-    <div class="space"></div>    
 
     <div id="root_map">
         <div id="map"></div>
@@ -30,24 +29,24 @@
         <form id="input_user" method="get" action="./result/">
             <label for="coor_ori1">From*:</label>
             <input 
-                type="text" step="any" pattern="[0-9.-]{1,}"
+                type="number" step="any" min="-90" max="90"
                 placeholder="latitude" title="latitude"
                 id="coor_ori1" class="query" name="ogn_lat" 
                 required>
             <input 
-                type="text" step="any" pattern="[0-9.-]{1,}"
+                type="number" step="any" min="-180" max="180"
                 placeholder="longitude" title="longitude"
                 id="coor_ori2" class="query" name="ogn_lon" 
                 required>
             <br>
             <label for="coor_ori1">To*:</label>
             <input 
-                type="text" step="any" pattern="[0-9.-]{1,}"
+                type="number" step="any" min="-90" max="90"
                 placeholder="latitude" title="latitude"
                 id="coor_dest1" class="query" name="dtn_lat" 
                 required>
             <input 
-                type="text" step="any" pattern="[0-9.-]{1,}"
+                type="number" step="any" min="-180" max="180"
                 placeholder="longitude" title="longitude"
                 id="coor_dest2" class="query" name="dtn_lon" 
                 required>
@@ -76,7 +75,6 @@
         </form>
     </div>      
 
-    <div class="space"></div>
     <footer>
         All about this website, source, etc. is in the <a href="documentation" id="doc_btn">Documentation</a> page.
     </footer>
