@@ -20,9 +20,10 @@ body{
     align-items: center;
     margin: 30px 50px 30px 50px;
     color: var(--white);
-    background-image: url('images/bg.png');
     row-gap: 150px;
-
+    
+    background-image: url('images/bg.png');
+    background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
 }

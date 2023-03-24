@@ -10,6 +10,7 @@
     --white: #ffe9d1;
     --black-transparent: #0000004d;
     --grey: #afa290;
+    --transparent: #00000000;
 }
 
 *{
@@ -26,6 +27,7 @@ body{
     row-gap: 150px;
 
     background-image: url('../images/bg.png');
+    background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -43,10 +45,6 @@ body{
 
 h2, h4, h5{
     margin: 5px;
-}
-
-.space{
-    height: 130px;
 }
 
 #root_map{
@@ -88,14 +86,9 @@ h2, h4, h5{
     width: 50px;
 }
 
-#input_user{
-    display: flex;
-    flex-direction: column;
-    width: 500px;
-}
-
-.query{
-    margin-bottom: 5px;
+.wea-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 2fr);
 }
 
 #route_steps{
@@ -132,8 +125,46 @@ h2, h4, h5{
     text-align: left;
     font-size: large;
     margin: 0;
-    padding: 0;
+    padding: 20px;
     box-sizing: border-box;
+}
+
+.accordion{
+    background-color: var(--transparent);
+    color: var(--white);
+    cursor: pointer;
+    border: none;
+    outline: none;
+    font-size: 18px;
+    text-align: left;
+    padding: 0;
+    transition: 0.4s;
+    width: 100%;
+}
+
+.accordion::after{
+    background-color: var(--black-transparent);
+    padding: 0 12px;
+    border-radius: 50%;
+    content: "\002B";
+    color: var(--white);
+    font-weight: bold;
+    font-size: 30px;
+    float: right;
+    transition: 0.4s ease-out;
+}
+
+.active::after{
+    transform: rotate(135deg);
+    float: right;
+    margin-left: 5px;
+    transition: 0.4s ease-out;
+}
+
+.panel{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
 }
 
 #weather{
@@ -175,7 +206,12 @@ span{
 }
 
 #doc_btn{
-    background-color: var(--grey);
+    background-color: var(--black-transparent);
+    color: var(--white);
+}
+
+footer{
+    text-align: center;
 }
 
 @media only screen and (min-width: 2000px){
@@ -199,18 +235,7 @@ span{
         margin: -30px;
         gap: 10px;
         transform: translateY(30px);
-    }
-
-    .loc{
-        font-size: 16px;
-    }
-
-    .time{
-        font-size: 10px;
-    }
-
-    .wea{
-        font-size: 12px;
+        grid-template-columns: repeat(1, 1fr);
     }
 
     footer{
