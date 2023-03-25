@@ -12,6 +12,7 @@
 
 *{
     font-family: 'Open Sans', sans-serif;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body{

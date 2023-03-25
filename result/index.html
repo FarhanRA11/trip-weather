@@ -19,13 +19,20 @@
         <i><h5 id="tt_coords"></h5></i>
         <br>
         <h4 id="tt_deptime"></h4>
+        <div style="display: flex; flex-direction: column; width: fit-content; align-items: center;" id="loader1">
+            <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>Loading...
+        </div>
     </div>
 
     <div id="root_map">
         <div id="map"></div>
         <label for="map"><i style="font-size: 15px;">Click on each waypoint to see weather forecast</i></label>
     </div>
-    <div id="route_steps""></div>
+    <div id="route_steps"">
+        <div style="display: flex; flex-direction: column; width: fit-content; align-items: center;" id="loader2">
+            <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>Loading...
+        </div>
+    </div>
 
     <footer>
         All about this website, source, etc. is in the <a href="../documentation" id="doc_btn">Documentation</a> page.

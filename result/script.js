@@ -51,8 +51,8 @@ const blueIcon = L.icon({
 });
 
 // function to get route from origin and destination, no limit
-async function get_route(rk){
-    console.log(rk.re[min%1]) //test
+function get_route(rk){
+    //console.log(rk.re[min%1]) //test
     const fix_ori = ori.split(',').reverse().toString(); //lon,lat
     const fix_dest = dest.split(',').reverse().toString() //lon,lat
     const route_url = `https://router.project-osrm.org/route/v1/driving/${fix_ori};${fix_dest}?overview=full&steps=true&annotations=true&alternatives=true`;
@@ -108,26 +108,26 @@ async function get_route(rk){
 // function, for each waypoint to get city/district name, 2500/day & 1/sec
 var address_list = [];
 async function get_name(loc, c, pass_unix, code, rk){//13 dig num
-    console.log(rk.as[min%3]) //test
+    //console.log(rk.as[min%3]) //test
     const res = await fetch('../data/address.json').catch(err => console.error(err));
     const name_data = await res.json();
     const data = name_data.results[0].components;
 
-    let village = data.village;
-    let neighbourhood = data.neighbourhood;
-    let quarter = data.quarter;
-    let suburb = data.suburb;
-    let town = data.town;
-    let city_district = data.city_district;
-    let city = data.city;
-    let county = data.county;
-    let state_district = data.state_district;
-    let state = data.state;
-    let country = data.country;
+    const village = data.village;
+    const neighbourhood = data.neighbourhood;
+    const quarter = data.quarter;
+    const suburb = data.suburb;
+    const town = data.town;
+    const city_district = data.city_district;
+    const city = data.city;
+    const county = data.county;
+    const state_district = data.state_district;
+    const state = data.state;
+    const country = data.country;
 
     const list = [country, state, state_district, county, city, city_district, town, suburb, quarter, neighbourhood, village];
-    let pattern = /[^a-zA-Z0-9().,"'\/\s]/;
-    var new_list = [];
+    const pattern = /[^a-zA-Z0-9().,"'\/\s]/;
+    let new_list = [];
     
     for(let i=0; i<11; i++) {
         if(list[i] !== undefined && !pattern.test(list[i])) {
@@ -138,12 +138,14 @@ async function get_name(loc, c, pass_unix, code, rk){//13 dig num
         }
     }
 
-    let address = new_list.reverse().join(',');
+    const address = new_list.reverse().join(',');
     
     if(c === 0){
         document.getElementById('tt_ori').textContent += address.replaceAll(',',', ');
     }else if(c === waypoints-1){
         document.getElementById('tt_des').textContent += address.replaceAll(',',', ');
+        document.getElementById('loader1').remove();
+        document.getElementById('loader2').remove();
     }
 
     if(!address_list.includes(address) || c === waypoints-1){
@@ -161,9 +163,9 @@ async function get_name(loc, c, pass_unix, code, rk){//13 dig num
 
 // function, for each city/district name to get weather, 1000/day
 async function get_weather(ad, unix, c, code, rk){//13 dig num
-    console.log(rk.wr[min%2]) //test
+    //console.log(rk.wr[min%2]) //test
     const res = await fetch('../data/weather.json').catch(err => console.error(err));
-    var data = await res.json();
+    let data = await res.json();
 
     data = data.currentConditions;
 
@@ -183,31 +185,89 @@ async function get_weather(ad, unix, c, code, rk){//13 dig num
     const windgust = data.windgust;
     const windspeed = data.windspeed; //
 
+    function descUV(uv){
+        if (uv < 2.5) {
+            return 'Low';
+        } else if (uv >= 2.5 && uv < 5.5) {
+            return 'Moderate';
+        } else if (uv >= 5.5 && uv < 7.5) {
+            return 'High';
+        } else if (uv >= 7.5 && uv < 10) {
+            return 'Very-High';
+        } else {
+            return 'Extreme';
+        }
+    }
 
-    let weather = 
-        `
-        <button class="accordion">
-            <span>Condition: </span>${text.replaceAll('-', ' ')}
-            <br><span>Rain Probability: </span>${precipprob}%
-            <br><span>Temperature: </span>${temp}&deg;C
-            <br><span>Wind: </span><img src="../images/components/wind-dir.png" class="wind-dir" style="transform:rotate(${winddir}deg);"> ${windspeed} km/h
+    const weather = `
+        <button class="accordion" id="acd-${code}">
+            <div class="wea-grid">
+                <div class="wea-comp">
+                    <img src="../images/weather_icon/${text}.png" class="icon-det">
+                    ${text.replaceAll('-', ' ')}
+                </div>
+                <div class="wea-comp">
+                    <img src="../images/components/rainprob.png" class="icon-det">
+                    ${precipprob}%
+                </div>
+                <div class="wea-comp">
+                    <img src="../images/components/temp-${Math.floor(temp/10)+1}.png" class="icon-det">
+                    ${temp}&deg;C
+                </div>
+                <div class="wea-comp">
+                    <img src="../images/components/wind.png" class="icon-det">
+                    <div>
+                        <img src="../images/components/wind-dir.png" class="wind-dir" style="transform:rotate(${winddir}deg);"> ${windspeed} km/h
+                    </div>
+                </div>
+            </div>
         </button>
-        <div class="panel">
-            <span>Precipitation: </span>${precip} mm
-            <br><span>Cloud Cover: </span>${cloudcover}%
-            <br><span>Humidity: </span>${humidity}%
-            <br><span>Snow: </span>${snow} cm
-            <br><span>Snow Depth: </span>${snowdepth} cm
-            <br><span>Feelslike: </span>${feelslike}&deg;C
-            <br><span>Wind Gust: </span>${windgust} km/h
-            <br><span>Pressure: </span>${pressure} hPa
-            <br><span>Visibility: </span>${visibility} km
-            <br><span>UV Index: </span>${uvindex}
+        <div class="panel wea-grid">
+            <div class="wea-comp">
+                <img src="../images/components/precip.png" class="icon-det">
+                <span>Precipitation</span>${precip} mm
+            </div>
+            <div class="wea-comp">
+                <img src="../images/components/cloud.png" class="icon-det">
+                <span>Cloud Cover</span>${cloudcover}%
+            </div>
+            <div class="wea-comp">
+                <img src="../images/components/humidity.png" class="icon-det">
+                <span>Humidity</span>${humidity}%
+            </div>
+            <div class="wea-comp">
+                <img src="../images/components/snow.png" class="icon-det">
+                <span>Snow</span>${snow} cm
+            </div>
+            <div class="wea-comp">
+                <img src="../images/components/snowdep.png" class="icon-det">
+                <span>Snow Depth</span>${snowdepth} cm
+            </div>
+            <div class="wea-comp">
+                <img src="../images/components/feel-${Math.floor(feelslike/10)+1}.png" class="icon-det">
+                <span>Feelslike</span>${feelslike}&deg;C
+            </div>
+            <div class="wea-comp">
+                <img src="../images/components/windgust.png" class="icon-det">
+                <span>Wind Gust</span>${windgust} km/h
+            </div>
+            <div class="wea-comp">
+                <img src="../images/components/pressure.png" class="icon-det">
+                <span>Pressure</span>${pressure} hPa
+            </div>
+            <div class="wea-comp">
+                <img src="../images/components/visibility.png" class="icon-det">
+                <span>Visibility</span>${visibility} km
+            </div>
+            <div class="wea-comp">
+                <img src="../images/components/uv-${descUV(uvindex)}.png" class="icon-det">
+                <span>UV Index</span>${uvindex} (${descUV(uvindex).replace('-', ' ')})
+            </div>
         </div>
-        `;
-        
+    `;
+
     document.getElementById(`wea_${code}`).innerHTML = weather;
-    
+
     // bindPopup per button here
     const time = new Date(unix).toLocaleString(
         'en-US', {
@@ -216,6 +276,7 @@ async function get_weather(ad, unix, c, code, rk){//13 dig num
             hour12: false
         }
     );
+
     map.eachLayer(layer => {
         if(layer.options && layer.options.id === `mark_${code}`){
             layer.bindPopup(`
@@ -225,7 +286,7 @@ async function get_weather(ad, unix, c, code, rk){//13 dig num
                     <i>${time}</i>
                 </div>
                 <div class="bp-icon-temp">
-                    <img src="../images/weather_icon/${text}.png" class="icon" alt="icon">
+                    <img src="../images/weather_icon/${text}.png" class="icon">
                     <div>${temp}&deg;C</div>
                 </div>
                 <div>
@@ -238,22 +299,16 @@ async function get_weather(ad, unix, c, code, rk){//13 dig num
     })
 
     //setting up accordion
-    if(c === waypoints-1){
-        var acc = document.getElementsByClassName("accordion");
-        console.log(acc)
-        for (let i=0; i<acc.length; i++) {
-            acc[i].addEventListener("click", function() {
-                this.classList.toggle("active");
-                var panel = this.nextElementSibling;
-                if (panel.style.maxHeight) {
-                    panel.style.maxHeight = null;
-                } else {
-                    panel.style.maxHeight = panel.scrollHeight + "px";
-                } 
-            });
+    const acd = document.getElementById(`acd-${code}`);
+    acd.onclick = function(){
+        acd.classList.toggle('active');
+        const panel = acd.nextElementSibling;
+        if(panel.style.maxHeight){
+            panel.style.maxHeight = null;
+        }else{
+            panel.style.maxHeight = panel.scrollHeight + 'px';
         }
     }
-    
 }
 
 // function to show the final result
@@ -351,7 +406,7 @@ window.onload = () => {
         [91, -1440]
     ], {color: 'red'}).addTo(map)
 
-    var ref = database.ref(`k`);
+    const ref = database.ref(`k`);
     ref.once('value', function(snapshot) {
         let key = snapshot.val();
         get_route(key)

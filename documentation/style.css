@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,500;0,700;1,300;1,500;1,700&display=swap');
+
+:root{
+    --blue-sky: #85c8ff;
+    --blue-sky-transparent: #85c8ff50;
+    --lgt-orange: #ffc67c;
+    --orange: #dfad6d;
+    --dark-orange: #c2975e;
+    --dark-purple: #490081;
+    --lgt-purple: #8685c7;
+    --white: #ffe9d1;
+    --black-transparent: #0000004d;
+    --grey: #afa290;
+    --transparent: #00000000;
+}
+
+*{
+    font-family: 'Open Sans', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body{
+    margin: 30px 50px;
+    color: var(--white);
+    row-gap: 50px;
+    display: flex;
+    flex-direction: column;
+    
+    background-image: url('../images/bg.png');
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.topic{
+    background-color: var(--black-transparent);
+    padding: 30px 50px;
+}
+
+a{
+    color: var(--white);
+}
