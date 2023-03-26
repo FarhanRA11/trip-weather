@@ -9,7 +9,7 @@ function formatted_datetime(time){
     return `${year}-${month}-${date}T${hour}:${minute}`;
 }
 
-// 3 function to get user location
+// 3 functions to get user location
 var lat;
 var lon;
 
@@ -22,16 +22,17 @@ function get_userloc(){
 }
 
 function showPosition(position){
-    alert('Found your location.');
     lat = position.coords.latitude;
     lon = position.coords.longitude;
-
+    
     document.getElementById('coor_ori1').value = lat;
     document.getElementById('coor_ori2').value = lon;
-
     map.removeLayer(mark_ori);
     mark_ori = L.marker([lat, lon], {icon: redIcon}).addTo(map).bindPopup('Your Location');
     map.setView([lat, lon], 10);
+    
+    document.getElementById('loader1').style.display = null;
+    alert('Found your location.');
 }
 
 function showError(error){
@@ -51,7 +52,7 @@ function showError(error){
     }
 }
 
-// declare costom marker
+// declare custom markers
 var redIcon = L.icon({
     iconUrl: 'images/markers/red-icon.png',
     shadowUrl: 'images/markers/shadow.png',
@@ -72,7 +73,7 @@ var blueIcon = L.icon({
     popupAnchor: [0, -40]
 });
 
-// popup function
+// popup functions
 function select_coor_ori(){
     map.removeLayer(mark_ori);
     mark_ori = L.marker([lat, lon], {icon: redIcon}).addTo(map).bindPopup('Starting Point');
@@ -80,7 +81,6 @@ function select_coor_ori(){
     document.getElementById('coor_ori1').value = lat;
     document.getElementById('coor_ori2').value = lon;
 }
-
 function select_coor_des(){
     map.removeLayer(mark_des);
     mark_des = L.marker([lat, lon], {icon: blueIcon}).addTo(map).bindPopup('Destination Point');
@@ -91,6 +91,7 @@ function select_coor_des(){
 
 // main function
 window.onload = () => {
+    // map boundries
     L.polygon([
         [91, 180.01],
         [-91, 180.01],
@@ -121,11 +122,18 @@ window.onload = () => {
                     `
                         ${lat}, ${lon}
                         <div id="option_map">
-                            <button onclick="select_coor_ori()" class="btn_map">Set as Origin</button>
-                            <button onclick="select_coor_des()" class="btn_map">Set as Destination</button>
+                            <button class="btn_map" id="popup-ori">Set as Origin</button>
+                            <button class="btn_map" id="popup-des">Set as Destination</button>
                         </div>
                 `)
                 .openOn(map);
+            
+            document.getElementById('popup-ori').onclick = () => {
+                select_coor_ori();
+            }
+            document.getElementById('popup-des').onclick = () => {
+                select_coor_des();
+            }
         }
     });
 
@@ -136,7 +144,15 @@ window.onload = () => {
     document.getElementById('time_dep').max = max_date;
 
     // searching user location
-    document.getElementById('btn_myloc').onclick = () => {
+    $('#btn_myloc').click(function(){
+        document.getElementById('loader1').style.display = 'flex';
         get_userloc();
-    }
+    });
+
+    // show loader
+    $('#btn_search').click(function(){
+        $('#input_user').on('submit', function(){
+            $('#loader2').style.display = 'flex';
+        })
+    });
 }

@@ -1,6 +1,7 @@
 export async function getAddress(rk, min, loc){
-    //console.log(rk.as[min%3])
-    return fetch('../data/address.json')
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${loc}&key=${rk.as[min%3]}&language=en&no_annotations=1&address_only=1&limit=1&no_record=1&abbrv=1`;
+    
+    return fetch(url, {method: 'GET'})
         .then(response => {
             if(!response.ok){
                 throw new Error("There's Problem");

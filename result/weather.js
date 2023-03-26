@@ -13,8 +13,9 @@ function descUV(index){
 }
 
 export async function WeatherForecast(rk, min, ad, unix, code){
-    //console.log(rk.wr[min%2])
-    return fetch('../data/weather.json')
+    const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${ad}/${Math.round(unix/Math.pow(10,3))}?unitGroup=metric&key=${rk.wr[min%3]}&include=current&iconSet=icons2&contentType=json&elements=cloudcover,dew,feelslike,humidity,icon,precip,precipprob,pressure,snow,snowdepth,temp,uvindex,visibility,winddir,windgust,windspeed`;
+
+    return fetch(url, {method: 'GET'})
         .then(response => {
             if(!response.ok){
                 throw new Error("There's Problem");

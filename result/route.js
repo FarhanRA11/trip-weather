@@ -1,10 +1,10 @@
 export async function getRoute(rk, min, ori, dest){
-    rk.re[min%1]
-    const fix_ori = ori.split(',').reverse().toString(); //lon,lat
-    const fix_dest = dest.split(',').reverse().toString() //lon,lat
-    const route_url = `https://router.project-osrm.org/route/v1/driving/${fix_ori};${fix_dest}?overview=full&steps=true&annotations=true&alternatives=true`;
+    rk.re[min%1];
+    const fixed_ori = ori.split(',').reverse().toString(); //lon,lat
+    const fixed_dest = dest.split(',').reverse().toString() //lon,lat
+    const url = `https://router.project-osrm.org/route/v1/driving/${fixed_ori};${fixed_dest}?overview=full&steps=true&annotations=true&alternatives=true`;
 
-    return fetch(route_url, {method: 'GET'})
+    return fetch(url, {method: 'GET'})
         .then(response => {
             if(!response.ok){
                 throw new Error('try reload the page.');
@@ -20,6 +20,7 @@ export async function getRoute(rk, min, ori, dest){
             console.log(route);
             route = route.routes[0].legs[0].steps;
             
+            // push starting and destination point
             route.unshift({
                 weight: 0,
                 intersections: [
