@@ -5,15 +5,15 @@ function descUV(index){
         return 'Moderate';
     } else if (index >= 5.5 && index < 7.5) {
         return 'High';
-    } else if (index >= 7.5 && index < 10) {
+    } else if (index >= 7.5 && index < 10.5) {
         return 'Very-High';
     } else {
         return 'Extreme';
     }
 }
 
-export async function WeatherForecast(rk, min, ad, unix, code){
-    const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${ad}/${Math.round(unix/Math.pow(10,3))}?unitGroup=metric&key=${rk.wr[min%3]}&include=current&iconSet=icons2&contentType=json&elements=cloudcover,dew,feelslike,humidity,icon,precip,precipprob,pressure,snow,snowdepth,temp,uvindex,visibility,winddir,windgust,windspeed`;
+export async function WeatherForecast(rk, min, loc, unix, code){
+    const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${loc}/${Math.round(unix/1000)}?unitGroup=metric&key=${rk.wr[min%3]}&include=current&iconSet=icons2&contentType=json&elements=cloudcover,dew,feelslike,humidity,icon,precip,precipprob,pressure,snow,snowdepth,temp,uvindex,visibility,winddir,windgust,windspeed`;
 
     return fetch(url, {method: 'GET'})
         .then(response => {
@@ -23,6 +23,7 @@ export async function WeatherForecast(rk, min, ad, unix, code){
             return response.json();
         })
         .then(data => {
+            console.log(data)
             data = data.currentConditions;
 
             const cloudcover = data.cloudcover;
@@ -35,7 +36,7 @@ export async function WeatherForecast(rk, min, ad, unix, code){
             const snow = data.snow;
             const snowdepth = data.snowdepth;
             const temp = data.temp; //
-            const uvindex = data.uvindex;
+            const uvindex = data.uvindex*11/10;
             const visibility = data.visibility;
             const winddir = data.winddir;
             const windgust = data.windgust;

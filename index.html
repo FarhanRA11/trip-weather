@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0">
+    <meta name="description" content="Find route between 2 points from user input and show waypoints along the route. On each waypoints it'll tell you the address, estimated time, and forecast weather once you arrive at that point. Plus an interactive map, giving the user a freedom to choose explore it.">
     <title>Trip Weather</title>
     <link rel="shortcut icon" href="images/icon.ico">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
@@ -25,7 +26,6 @@
             <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>Loading...
         </div>
     </div>
-
     
     <div id="root-input-user">
         <form id="input_user" method="get" action="./result/">
@@ -70,10 +70,6 @@
                 id="btn_search" class="button"
                 value="Find Result">
             </div>
-
-            <div id="loader2" class="loader">
-                <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>Loading...
-            </div>
             
         </form>
     </div>      
@@ -82,7 +78,6 @@
         All about this website, source, etc. is in the <a href="documentation" id="doc_btn">Documentation</a> page.
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
     <script>
         // codeblock to setting up embedded map

@@ -88,9 +88,8 @@ function select_coor_des(){
     document.getElementById('coor_dest1').value = lat;
     document.getElementById('coor_dest2').value = lon;
 }
-
 // main function
-window.onload = () => {
+window.onload = () => {    
     // map boundries
     L.polygon([
         [91, 180.01],
@@ -136,23 +135,22 @@ window.onload = () => {
             }
         }
     });
-
+    
     // Get date 10 day ahead range for routing
-    let today = formatted_datetime(Date.now());
-    let max_date = formatted_datetime(Date.now() + 10 * 24*60*60*1000); // unix add 10 days
+    var today = formatted_datetime(Date.now());
+    var max_date = formatted_datetime(Date.now() + 10 * 24*60*60*1000); // unix add 10 days
     document.getElementById('time_dep').min = today;
     document.getElementById('time_dep').max = max_date;
+    setInterval(() => {
+        today = formatted_datetime(Date.now());
+        max_date = formatted_datetime(Date.now() + 10 * 24*60*60*1000); // unix add 10 days
+        document.getElementById('time_dep').min = today;
+        document.getElementById('time_dep').max = max_date;
+    }, 999);
 
     // searching user location
-    $('#btn_myloc').click(function(){
+    document.getElementById('btn_myloc').onclick = () => {
         document.getElementById('loader1').style.display = 'flex';
         get_userloc();
-    });
-
-    // show loader
-    $('#btn_search').click(function(){
-        $('#input_user').on('submit', function(){
-            $('#loader2').style.display = 'flex';
-        })
-    });
+    }
 }

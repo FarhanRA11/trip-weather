@@ -77,7 +77,7 @@ function naming(rk, min, loc, pass_unix, index, code){//13 dig num
             if((!address_list.includes(address) || index === waypoints-1) && address.split(',').length > 2){
                 address_list.push(address);
                 document.getElementById(`loc_${code}`).textContent = address.replaceAll(',',', ');
-                forecast(rk, min, address, pass_unix, index, code);
+                forecast(rk, min, address, pass_unix, index, code, loc);
             }else{
                 document.getElementById(`root_${code}`).remove();
                 map.eachLayer(layer => {
@@ -90,8 +90,8 @@ function naming(rk, min, loc, pass_unix, index, code){//13 dig num
 }
 
 // function, for each city/district name to get weather, 1000/day
-async function forecast(rk, min, ad, unix, c, code){//13 dig num
-    WeatherForecast(rk, min, ad, unix, code)
+async function forecast(rk, min, ad, unix, c, code, loc){//13 dig num
+    WeatherForecast(rk, min, loc, unix, code)
         .then(result => {
             if(result == undefined){
                 document.getElementById(`root_${code}`).remove();
@@ -154,8 +154,8 @@ async function forecast(rk, min, ad, unix, c, code){//13 dig num
 
 // function to show the final result
 var waypoints;
-var lat2 = ori.split(',')[0];
-var lon2 = ori.split(',')[1];
+var lat = ori.split(',')[0];
+var lon = ori.split(',')[1];
 
 function calculate(pass_rk, s){
     waypoints = s.length;
@@ -167,26 +167,26 @@ function calculate(pass_rk, s){
             let code = `${i}/${j}`
             let x = s[i].intersections[j].location[1];
             let y = s[i].intersections[j].location[0];
-            let dist = Math.sqrt((x-lat2)**2 + (y-lon2)**2, 2)
+            let dist = Math.sqrt((x-lat)**2 + (y-lon)**2, 2)
             dep_unix += (partial_duration + 5*1000); // 5s per intersections
             
             if(dist >= 0.02 || i === 0 || i === waypoints-1){ // 1km --> 0.009
-                lat2 = x;
-                lon2 = y;
+                lat = x;
+                lon = y;
 
                 if(i === 0){
-                    L.marker([lat2,lon2], {
+                    L.marker([lat,lon], {
                         id: `mark_${code}`,
                         icon: redIcon
                     }).addTo(map);
                 }else if(i === waypoints-1){
-                    L.marker([lat2,lon2], {
+                    L.marker([lat,lon], {
                         id: `mark_${code}`,
                         icon: blueIcon
                     }).addTo(map);
-                    map.setView([lat2, lon2], 10)
+                    map.setView([lat, lon], 10)
                 }else{
-                    L.marker([lat2,lon2], {
+                    L.marker([lat,lon], {
                         id: `mark_${code}`,
                         icon: greenIcon
                     }).addTo(map);
@@ -208,7 +208,7 @@ function calculate(pass_rk, s){
                         hour12: false
                     })
 
-                naming(pass_rk, min, `${lat2},${lon2}`, dep_unix, i, code) //13 dig num
+                naming(pass_rk, min, `${lat},${lon}`, dep_unix, i, code) //13 dig num
             }            
         }
     }

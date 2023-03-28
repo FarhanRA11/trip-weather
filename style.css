@@ -9,6 +9,8 @@
     --dark-purple: #490081;
     --lgt-purple: #8685c7;
     --white: #ffe9d1;
+    --red: #e93232;
+    --lgt-red: #ffc5b6;
 }
 
 *{
@@ -73,6 +75,16 @@ h1{
     flex-direction: column;
 }
 
+.btn_map{
+    width: 180px;
+    margin: 5px;
+    background-color: var(--orange);
+    min-width: fit-content;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 .leaflet-popup-content-wrapper{
     text-align: center;
     display: flex;
@@ -86,6 +98,7 @@ h1{
     padding: 15px 10px;
     background-color: var(--lgt-orange);
     color: var(--dark-purple);
+    cursor: pointer;
 }
 
 .button:hover{
@@ -188,15 +201,6 @@ h1{
     align-items: center;
 }
 
-.btn_map{
-    width: 180px;
-    margin: 5px;
-    background-color: var(--orange);
-    min-width: fit-content;
-    border: none;
-    border-radius: 4px;
-}
-
 #root-input-user{
     display: flex;
     flex-direction: column;
@@ -233,6 +237,12 @@ label{
     padding: 0 15px 0 15px;
     border: 2px solid var(--dark-orange);
     background-color: var(--white);
+}
+
+.query:invalid, .query:invalid:focus{
+    outline: none;
+    border: 3px solid var(--red);
+    background-color: var(--lgt-red);
 }
 
 .query:focus{
