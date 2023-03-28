@@ -74,7 +74,8 @@ function naming(rk, min, loc, pass_unix, index, code){//13 dig num
                 document.getElementById('loader1').remove();
             }
         
-            if(!address_list.includes(address) || index === waypoints-1){
+            if((!address_list.includes(address) || index === waypoints-1) && address.split(',').length > 2){
+                address_list.push(address);
                 document.getElementById(`loc_${code}`).textContent = address.replaceAll(',',', ');
                 forecast(rk, min, address, pass_unix, index, code);
             }else{
@@ -92,45 +93,62 @@ function naming(rk, min, loc, pass_unix, index, code){//13 dig num
 async function forecast(rk, min, ad, unix, c, code){//13 dig num
     WeatherForecast(rk, min, ad, unix, code)
         .then(result => {
-            document.getElementById(`wea_${code}`).innerHTML = result[0];
+            if(result == undefined){
+                document.getElementById(`root_${code}`).remove();
+                map.eachLayer(layer => {
+                    if(layer.options && layer.options.id === `mark_${code}`){
+                        map.removeLayer(layer);
+                    }
+                });
+            }else{
+                document.getElementById(`wea_${code}`).innerHTML = result[0];
 
-            // bindPopup per button here
-            map.eachLayer(layer => {
-                if(layer.options && layer.options.id === `mark_${code}`){
-                    layer.bindPopup(`
-                    <div class="bindPopup">
-                        <div id="bp-ad">
-                            <b>${ad}</b><br>
-                            <i>${result[1]}</i>
+                // bindPopup per button here
+                map.eachLayer(layer => {
+                    if(layer.options && layer.options.id === `mark_${code}`){
+                        layer.bindPopup(`
+                        <div class="bindPopup">
+                            <div id="bp-ad">
+                                <b>${ad}</b><br>
+                                <i>${result[1]}</i>
+                            </div>
+                            <div class="bp-icon-temp">
+                                <img src="../images/weather_icon/${result[2]}.png" class="icon">
+                                <div>${result[3]}&deg;C</div>
+                            </div>
+                            <div>
+                                <a class="details" href="#root_${code}">See weather details</a>
+                            </div>
                         </div>
-                        <div class="bp-icon-temp">
-                            <img src="../images/weather_icon/${result[2]}.png" class="icon">
-                            <div>${result[3]}&deg;C</div>
-                        </div>
-                        <div>
-                            <a class="details" href="#root_${code}">See weather details</a>
-                        </div>
-                    </div>
-                    `)
-                    layer.openPopup();
-                }
-            })
+                        `)
+                        layer.openPopup();
+                    }
+                })
 
-            //setting up accordion
-            const acd = document.getElementById(`acd-${code}`);
-            acd.onclick = function(){
-                acd.classList.toggle('active');
-                const panel = acd.nextElementSibling;
-                if(panel.style.maxHeight){
-                    panel.style.maxHeight = null;
-                }else{
-                    panel.style.maxHeight = panel.scrollHeight + 'px';
+                //setting up accordion
+                const acd = document.getElementById(`acd-${code}`);
+                acd.onclick = function(){
+                    acd.classList.toggle('active');
+                    const panel = acd.nextElementSibling;
+                    if(panel.style.maxHeight){
+                        panel.style.maxHeight = null;
+                    }else{
+                        panel.style.maxHeight = panel.scrollHeight + 'px';
+                    }
                 }
             }
         })
     
     if(c === waypoints-1){
         document.getElementById('loader2').remove();
+    }
+
+    document.getElementById(`loc_${code}`).onclick = () => {
+        map.eachLayer(layer => {
+            if(layer.options && layer.options.id === `mark_${code}`){
+                layer.openPopup();
+            }
+        })
     }
 }
 
@@ -177,7 +195,7 @@ function calculate(pass_rk, s){
                 document.getElementById('route_steps').innerHTML +=
                 `
                     <div id="root_${code}" class="grid-item">
-                        <b><div id="loc_${code}" class="loc"></div></b>
+                        <b><a id="loc_${code}" class="loc" href="#map"></a></b>
                         <i><div id="time_${code}" class="time"></div></i>
                         <div id="wea_${code}" class="wea"></div>
                     </div>

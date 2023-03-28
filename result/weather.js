@@ -18,7 +18,7 @@ export async function WeatherForecast(rk, min, ad, unix, code){
     return fetch(url, {method: 'GET'})
         .then(response => {
             if(!response.ok){
-                throw new Error("There's Problem");
+                throw new Error(response.status);
             }
             return response.json();
         })
@@ -46,24 +46,25 @@ export async function WeatherForecast(rk, min, ad, unix, code){
                     <div class="wea-grid">
 
                         <div class="wea-comp">
-                            <img src="../images/weather_icon/${text}.png" class="icon-det">
+                            <img src="../images/weather_icon/${text}.png" class="icon-det" loading="lazy">
                             ${text.replaceAll('-', ' ')}
                         </div>
 
                         <div class="wea-comp">
-                            <img src="../images/components/rainprob.png" class="icon-det">
+                            <img src="../images/components/rainprob.png" class="icon-det" loading="lazy">
                             ${precipprob}%
                         </div>
 
                         <div class="wea-comp">
-                            <img src="../images/components/temp-${Math.floor(temp/10)+1}.png" class="icon-det">
+                            <img src="../images/components/temp-${Math.floor(temp/10)+1}.png" class="icon-det" loading="lazy">
                             ${temp}&deg;C
                         </div>
 
                         <div class="wea-comp">
-                            <img src="../images/components/wind.png" class="icon-det">
-                            <div>
-                                <img src="../images/components/wind-dir.png" class="wind-dir" style="transform:rotate(${winddir}deg);"> ${windspeed} km/h
+                            <img src="../images/components/wind.png" class="icon-det" loading="lazy">
+                            <div style="gap:5px; display:flex;">
+                                <img src="../images/components/wind-dir.png" class="wind-dir" style="transform:rotate(${winddir}deg);" loading="lazy"> 
+                                <div>${windspeed} km/h</div>
                             </div>
                         </div>
 
@@ -72,43 +73,43 @@ export async function WeatherForecast(rk, min, ad, unix, code){
 
                 <div class="panel wea-grid">
                     <div class="wea-comp">
-                        <img src="../images/components/precip.png" class="icon-det">
+                        <img src="../images/components/precip.png" class="icon-det" loading="lazy">
                         <span>Precipitation</span>${precip} mm
                     </div>
                     <div class="wea-comp">
-                        <img src="../images/components/cloud.png" class="icon-det">
+                        <img src="../images/components/cloud.png" class="icon-det" loading="lazy">
                         <span>Cloud Cover</span>${cloudcover}%
                     </div>
                     <div class="wea-comp">
-                        <img src="../images/components/humidity.png" class="icon-det">
+                        <img src="../images/components/humidity.png" class="icon-det" loading="lazy">
                         <span>Humidity</span>${humidity}%
                     </div>
                     <div class="wea-comp">
-                        <img src="../images/components/snow.png" class="icon-det">
+                        <img src="../images/components/snow.png" class="icon-det" loading="lazy">
                         <span>Snow</span>${snow} cm
                     </div>
                     <div class="wea-comp">
-                        <img src="../images/components/snowdep.png" class="icon-det">
+                        <img src="../images/components/snowdep.png" class="icon-det" loading="lazy">
                         <span>Snow Depth</span>${snowdepth} cm
                     </div>
                     <div class="wea-comp">
-                        <img src="../images/components/feel-${Math.floor(feelslike/10)+1}.png" class="icon-det">
+                        <img src="../images/components/feel-${Math.floor(feelslike/10)+1}.png" class="icon-det" loading="lazy">
                         <span>Feelslike</span>${feelslike}&deg;C
                     </div>
                     <div class="wea-comp">
-                        <img src="../images/components/windgust.png" class="icon-det">
+                        <img src="../images/components/windgust.png" class="icon-det" loading="lazy">
                         <span>Wind Gust</span>${windgust} km/h
                     </div>
                     <div class="wea-comp">
-                        <img src="../images/components/pressure.png" class="icon-det">
+                        <img src="../images/components/pressure.png" class="icon-det" loading="lazy">
                         <span>Pressure</span>${pressure} hPa
                     </div>
                     <div class="wea-comp">
-                        <img src="../images/components/visibility.png" class="icon-det">
+                        <img src="../images/components/visibility.png" class="icon-det" loading="lazy">
                         <span>Visibility</span>${visibility} km
                     </div>
                     <div class="wea-comp">
-                        <img src="../images/components/uv-${descUV(uvindex)}.png" class="icon-det">
+                        <img src="../images/components/uv-${descUV(uvindex)}.png" class="icon-det" loading="lazy">
                         <span>UV Index</span>${uvindex} (${descUV(uvindex).replace('-', ' ')})
                     </div>
                 </div>
@@ -127,5 +128,6 @@ export async function WeatherForecast(rk, min, ad, unix, code){
         })
         .catch(err => {
             console.error(err);
+            console.clear();
         })
 }

@@ -63,11 +63,16 @@ h2, h4, h5{
     z-index: 99;
 }
 
-.leaflet-popup-content-wrapper{
+.leaflet-popup-content{
+    margin: 13px 20px;
+    display: flex;
+    align-items: center;
+    width: fit-content;
     max-width: 200px;
 }
 
 .bindPopup{
+    width: fit-content;
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -98,6 +103,7 @@ h2, h4, h5{
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
 }
 
 .icon-det{
@@ -214,6 +220,10 @@ h2, h4, h5{
 
 #address{
     margin-top: 30px;
+}
+
+.loc{
+    color: var(--white);
 }
 
 .time{
