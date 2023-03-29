@@ -240,13 +240,13 @@ label{
 }
 
 .query:invalid, .query:invalid:focus{
-    outline: none;
+    outline-color: transparent;
     border: 3px solid var(--red);
     background-color: var(--lgt-red);
 }
 
 .query:focus{
-    outline: none;
+    outline-color: transparent;
     border: 3px solid var(--orange)
 }
 

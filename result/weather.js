@@ -1,3 +1,9 @@
+function titleCase(str){
+    return str.replace(/\w\S*/g, function(txt){
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+}
+
 function descUV(index){
     if (index < 2.5) {
         return 'Low';
@@ -48,7 +54,7 @@ export async function WeatherForecast(rk, min, loc, unix, code){
 
                         <div class="wea-comp">
                             <img src="../images/weather_icon/${text}.png" class="icon-det" loading="lazy">
-                            ${text.replaceAll('-', ' ')}
+                            ${titleCase(text.replaceAll('-', ' '))}
                         </div>
 
                         <div class="wea-comp">
@@ -111,7 +117,7 @@ export async function WeatherForecast(rk, min, loc, unix, code){
                     </div>
                     <div class="wea-comp">
                         <img src="../images/components/uv-${descUV(uvindex)}.png" class="icon-det" loading="lazy">
-                        <span>UV Index</span>${uvindex} (${descUV(uvindex).replace('-', ' ')})
+                        <span>UV Index</span>${Math.round(uvindex)} (${descUV(uvindex).replace('-', ' ')})
                     </div>
                 </div>
             `;

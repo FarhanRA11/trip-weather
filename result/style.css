@@ -109,6 +109,11 @@ h2, h4, h5{
 .icon-det{
     height: 50px;
     width: 50px;
+    background-color: var(--blue-sky-transparent);
+    border-radius: 20%;
+    display: flex;
+    align-items: center;
+    padding: 4px;
 }
 
 #route_steps{
@@ -243,7 +248,7 @@ h2, h4, h5{
     color: var(--white);
     cursor: pointer;
     border: none;
-    outline: none;
+    outline-color: transparent;
     font-size: 18px;
     text-align: left;
     padding: 0;
