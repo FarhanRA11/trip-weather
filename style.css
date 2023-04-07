@@ -11,6 +11,7 @@
     --white: #ffe9d1;
     --red: #e93232;
     --lgt-red: #ffc5b6;
+    --transparent: #00000000;
 }
 
 *{
@@ -246,7 +247,7 @@ label{
 }
 
 .query:focus{
-    outline-color: transparent;
+    outline: none;
     border: 3px solid var(--orange)
 }
 

@@ -4,9 +4,10 @@ import { WeatherForecast } from './weather.js';
 
 const urlSegment = window.location.search;
 const parameters = urlSegment.substring(1).split('&');
-const ori = `${decodeURIComponent(parameters[0].slice(8))},${decodeURIComponent(parameters[1].slice(8))}`; //lat,lon
-const dest = `${decodeURIComponent(parameters[2].slice(8))},${decodeURIComponent(parameters[3].slice(8))}`; //lat,lon
-const dep = decodeURIComponent(parameters[4].slice(3)); //YYYY-MM-DDThh:mm
+const ori = `${decodeURIComponent(parameters[0].slice(3))},${decodeURIComponent(parameters[1].slice(3))}`; //lat,lon
+const dest = `${decodeURIComponent(parameters[2].slice(3))},${decodeURIComponent(parameters[3].slice(3))}`; //lat,lon
+const dep = decodeURIComponent(parameters[4].slice(2)); //YYYY-MM-DDThh:mm
+console.log(ori, dest, dep)
 var dep_unix = +new Date(dep); //13 dig number
 const min = new Date(Date.now()).getMinutes();
 
@@ -77,7 +78,7 @@ function naming(rk, min, loc, pass_unix, index, code){//13 dig num
             if((!address_list.includes(address) || index === waypoints-1) && address.split(',').length > 2){
                 address_list.push(address);
                 document.getElementById(`loc_${code}`).textContent = address.replaceAll(',',', ');
-                forecast(rk, min, address, pass_unix, index, code, loc);
+                forecast(rk, min, address.replaceAll(',',', '), pass_unix, index, code, loc);
             }else{
                 document.getElementById(`root_${code}`).remove();
                 map.eachLayer(layer => {

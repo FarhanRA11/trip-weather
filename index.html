@@ -8,6 +8,7 @@
     <title>Trip Weather</title>
     <link rel="shortcut icon" href="images/icon.ico">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -33,35 +34,39 @@
             <input 
                 type="number" step="any" min="-90" max="90"
                 placeholder="latitude" title="latitude"
-                id="coor_ori1" class="query" name="ogn_lat" 
+                id="coor_ori1" class="query" name="oa" 
                 required>
             <input 
                 type="number" step="any" min="-180" max="180"
                 placeholder="longitude" title="longitude"
-                id="coor_ori2" class="query" name="ogn_lon" 
+                id="coor_ori2" class="query" name="oo" 
                 required>
             <br>
             <label for="coor_ori1">To*:</label>
             <input 
                 type="number" step="any" min="-90" max="90"
                 placeholder="latitude" title="latitude"
-                id="coor_dest1" class="query" name="dtn_lat" 
+                id="coor_dest1" class="query" name="da" 
                 required>
             <input 
                 type="number" step="any" min="-180" max="180"
                 placeholder="longitude" title="longitude"
-                id="coor_dest2" class="query" name="dtn_lon" 
+                id="coor_dest2" class="query" name="do" 
                 required>
             
             <label for="coor_dest2"><i>
                 *ex. -12.345678
             </i></label>
+
+            <br>
+            <div id="via">oke</div>
+
             <br>
             <label for="time_dep">Depart at?</label>
             <input 
                 type="datetime-local" 
                 max="" min="" 
-                id="time_dep" class="query" name="dt" 
+                id="time_dep" class="query" name="t" 
                 required>
             <br>
             <div style="display: flex; justify-content: center;">
@@ -79,6 +84,7 @@
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     <script>
         // codeblock to setting up embedded map
         var bounds = L.latLngBounds(L.latLng(135, -170), L.latLng(-135, 180));
@@ -93,7 +99,13 @@
             minZoom: 3,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
-    
+        
+        let routes = L.Routing.control({
+            waypoints: [
+                
+            ]
+        }).addTo(map);
+
         var mark_ori = L.marker([]);
         var mark_des = L.marker([]);
     </script>
