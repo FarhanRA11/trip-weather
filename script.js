@@ -1,3 +1,8 @@
+var control = L.Routing.control({
+    waypoints: oriDest,
+    routeWhileDragging: true,
+}).addTo(map);
+
 // function to convert unix time to formatted datetime YYYY-MM-DDThh:mm
 function formatted_datetime(time){
 	const year = new Date(time).getFullYear();
@@ -27,8 +32,11 @@ function showPosition(position){
     
     document.getElementById('coor_ori1').value = lat;
     document.getElementById('coor_ori2').value = lon;
-    map.removeLayer(mark_ori);
-    mark_ori = L.marker([lat, lon], {icon: redIcon}).addTo(map).bindPopup('Your Location');
+    // map.removeLayer(mark_ori);
+    // mark_ori = L.marker([lat, lon], {icon: redIcon}).addTo(map).bindPopup('Your Location');
+
+    oriDest[0] = L.latLng(lat, lon)
+    route()
     map.setView([lat, lon], 10);
     
     document.getElementById('loader1').style.display = null;
@@ -75,21 +83,29 @@ var blueIcon = L.icon({
 
 // popup functions
 function select_coor_ori(){
-    map.removeLayer(mark_ori);
-    mark_ori = L.marker([lat, lon], {icon: redIcon}).addTo(map).bindPopup('Starting Point');
-    map.closePopup();
-    document.getElementById('coor_ori1').value = lat;
-    document.getElementById('coor_ori2').value = lon;
+    // map.removeLayer(mark_ori);
+    // mark_ori = L.marker([lat, lon], {icon: redIcon}).addTo(map).bindPopup('Starting Point');
+    // map.closePopup();
+    // document.getElementById('coor_ori1').value = lat;
+    // document.getElementById('coor_ori2').value = lon;
 }
 function select_coor_des(){
-    map.removeLayer(mark_des);
-    mark_des = L.marker([lat, lon], {icon: blueIcon}).addTo(map).bindPopup('Destination Point');
-    map.closePopup();
-    document.getElementById('coor_dest1').value = lat;
-    document.getElementById('coor_dest2').value = lon;
+    // map.removeLayer(mark_des);
+    // mark_des = L.marker([lat, lon], {icon: blueIcon}).addTo(map).bindPopup('Destination Point');
+    // map.closePopup();
+    // document.getElementById('coor_dest1').value = lat;
+    // document.getElementById('coor_dest2').value = lon;
 }
+
+var oriDest = [null, null];
+function route(){
+    control.setWaypoints(oriDest)
+}
+
 // main function
-window.onload = () => {    
+window.onload = () => {   
+    document.getElementById('reset-route').hidden = true;
+    
     // map boundries
     L.polygon([
         [91, 180.01],
@@ -108,6 +124,55 @@ window.onload = () => {
         L.latLng(-90, -180),
         L.latLng(90, 180)
     );
+
+    control.on('routeselected', function(event){
+        const len = event.route.waypoints.length;
+        const list = event.route.waypoints.map(waypoint => waypoint.latLng);
+        console.log(list);
+
+        if(list.length > 2){
+            document.getElementById('reset-route').hidden = false;
+
+            let via = [];
+            for(let i=0; i<list.slice(1, len - 1).length; i++){
+                let element = `${list.slice(1, len - 1)[i].lat},${list.slice(1, len - 1)[i].lng}`;
+                via.push(element);
+            }
+            console.log(via.join(';'));
+            document.getElementById('via').textContent = `via: ${via.join('; ')}`;
+
+            const form = document.getElementById('input_user');
+            form.addEventListener('submit', event => {
+                event.preventDefault();
+                const url = new URL(form.action, window.location.origin);
+
+                url.searchParams.set('oa', form.oa.value);
+                url.searchParams.set('oo', form.oo.value);
+                url.searchParams.set('da', form.da.value);
+                url.searchParams.set('do', form.do.value);
+                url.searchParams.set('t', form.t.value);
+                url.searchParams.set('v', via.join(';'));
+
+                window.location.href = url.toString();
+            });
+        }
+
+        document.getElementById('coor_ori1').value = list[0].lat;
+        document.getElementById('coor_ori2').value = list[0].lng;
+        document.getElementById('coor_dest1').value = list[len - 1].lat;
+        document.getElementById('coor_dest2').value = list[len - 1].lng;
+    })
+
+    document.getElementById('reset-route').addEventListener('click', event => {
+        event.preventDefault();
+
+        let waypoints = control.getWaypoints();
+        let via = [waypoints[0], waypoints[waypoints.length - 1]];
+        control.setWaypoints(via)
+
+        document.getElementById('via').textContent = '';
+        document.getElementById('reset-route').hidden = true;
+    })
 
     // select position on map
     map.on('click', (event) => {
@@ -128,24 +193,26 @@ window.onload = () => {
                 .openOn(map);
             
             document.getElementById('popup-ori').onclick = () => {
-                select_coor_ori();
+                oriDest[0] = L.latLng(lat, lon)
+                route()
             }
             document.getElementById('popup-des').onclick = () => {
-                select_coor_des();
+                oriDest[1] = L.latLng(lat, lon)
+                route()
             }
         }
     });
     
     // Get date 10 day ahead range for routing
-    var today = formatted_datetime(Date.now());
-    var max_date = formatted_datetime(Date.now() + 10 * 24*60*60*1000); // unix add 10 days
-    document.getElementById('time_dep').min = today;
-    document.getElementById('time_dep').max = max_date;
+    var today = Date.now();
+    var max_date = Date.now() + 864e6; // unix add 10 days (10*24*60*60*1000)
+    document.getElementById('time_dep').min = formatted_datetime(today);
+    document.getElementById('time_dep').max = formatted_datetime(max_date);
     setInterval(() => {
-        today = formatted_datetime(Date.now());
-        max_date = formatted_datetime(Date.now() + 10 * 24*60*60*1000); // unix add 10 days
-        document.getElementById('time_dep').min = today;
-        document.getElementById('time_dep').max = max_date;
+        today += 999;
+        max_date += 999;
+        document.getElementById('time_dep').min = formatted_datetime(today);
+        document.getElementById('time_dep').max = formatted_datetime(max_date);
     }, 999);
 
     // searching user location

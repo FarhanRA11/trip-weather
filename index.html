@@ -59,19 +59,22 @@
             </i></label>
 
             <br>
-            <div id="via">oke</div>
+            <div>
+                <div id="via"></div>
+                <button id="reset-route" class="button">Reset waypoints</button>
+            </div>
 
             <br>
             <label for="time_dep">Depart at?</label>
             <input 
-                type="datetime-local" 
-                max="" min="" 
-                id="time_dep" class="query" name="t" 
+                type="datetime-local"
+                max="" min=""
+                id="time_dep" class="query" name="t"
                 required>
             <br>
             <div style="display: flex; justify-content: center;">
                 <input 
-                type="submit" 
+                type="submit"
                 id="btn_search" class="button"
                 value="Find Result">
             </div>
@@ -80,7 +83,9 @@
     </div>      
 
     <footer>
-        All about this website, source, etc. is in the <a href="documentation" id="doc_btn">Documentation</a> page.
+        Check it out!<br>
+        <a href="documentation" target="_blank" class="link">Documentation</a><br>
+        <a href="LICENSE.md" target="_blank" class="link">License</a>
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
@@ -98,12 +103,6 @@
             maxZoom: 19,
             minZoom: 3,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
-        
-        let routes = L.Routing.control({
-            waypoints: [
-                
-            ]
         }).addTo(map);
 
         var mark_ori = L.marker([]);
