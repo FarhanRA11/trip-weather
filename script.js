@@ -32,14 +32,14 @@ function showPosition(position){
     
     document.getElementById('coor_ori1').value = lat;
     document.getElementById('coor_ori2').value = lon;
-    // map.removeLayer(mark_ori);
-    // mark_ori = L.marker([lat, lon], {icon: redIcon}).addTo(map).bindPopup('Your Location');
 
     oriDest[0] = L.latLng(lat, lon)
     route()
     map.setView([lat, lon], 10);
     
     document.getElementById('loader1').style.display = null;
+    document.getElementById('via').textContent = '';
+    document.getElementById('reset-route').hidden = true;
     alert('Found your location.');
 }
 
@@ -58,43 +58,6 @@ function showError(error){
             alert('An unknown error occured.');
             break;
     }
-}
-
-// declare custom markers
-var redIcon = L.icon({
-    iconUrl: 'images/markers/red-icon.png',
-    shadowUrl: 'images/markers/shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    shadowSize: [41, 41],
-    shadowAnchor: [12, 41],
-    popupAnchor: [0, -40]
-});
-
-var blueIcon = L.icon({
-    iconUrl: 'images/markers/blue-icon.png',
-    shadowUrl: 'images/markers/shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    shadowSize: [41, 41],
-    shadowAnchor: [12, 41],
-    popupAnchor: [0, -40]
-});
-
-// popup functions
-function select_coor_ori(){
-    // map.removeLayer(mark_ori);
-    // mark_ori = L.marker([lat, lon], {icon: redIcon}).addTo(map).bindPopup('Starting Point');
-    // map.closePopup();
-    // document.getElementById('coor_ori1').value = lat;
-    // document.getElementById('coor_ori2').value = lon;
-}
-function select_coor_des(){
-    // map.removeLayer(mark_des);
-    // mark_des = L.marker([lat, lon], {icon: blueIcon}).addTo(map).bindPopup('Destination Point');
-    // map.closePopup();
-    // document.getElementById('coor_dest1').value = lat;
-    // document.getElementById('coor_dest2').value = lon;
 }
 
 var oriDest = [null, null];
@@ -120,7 +83,7 @@ window.onload = () => {
         [91, -1440]
     ], {color: 'red'}).addTo(map)
 
-    var bounds = L.latLngBounds(
+    const bounds = L.latLngBounds(
         L.latLng(-90, -180),
         L.latLng(90, 180)
     );
@@ -128,6 +91,7 @@ window.onload = () => {
     control.on('routeselected', function(event){
         const len = event.route.waypoints.length;
         const list = event.route.waypoints.map(waypoint => waypoint.latLng);
+        console.log(event);
         console.log(list);
 
         if(list.length > 2){
@@ -166,8 +130,8 @@ window.onload = () => {
     document.getElementById('reset-route').addEventListener('click', event => {
         event.preventDefault();
 
-        let waypoints = control.getWaypoints();
-        let via = [waypoints[0], waypoints[waypoints.length - 1]];
+        const waypoints = control.getWaypoints();
+        const via = [waypoints[0], waypoints[waypoints.length - 1]];
         control.setWaypoints(via)
 
         document.getElementById('via').textContent = '';

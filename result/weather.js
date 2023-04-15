@@ -18,10 +18,10 @@ function descUV(index){
     }
 }
 
-export async function WeatherForecast(rk, min, loc, unix, code){
+export async function WeatherForecast(rk, min, ad, unix, c, code, loc, waypoints){
     const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${loc}/${Math.round(unix/1000)}?unitGroup=metric&key=${rk.wr[min%3]}&include=current&iconSet=icons2&contentType=json&elements=cloudcover,dew,feelslike,humidity,icon,precip,precipprob,pressure,snow,snowdepth,temp,uvindex,visibility,winddir,windgust,windspeed`;
 
-    return fetch(url, {method: 'GET'})
+    fetch(url, {method: 'GET'})
         .then(response => {
             if(!response.ok){
                 throw new Error(response.status);
@@ -29,7 +29,7 @@ export async function WeatherForecast(rk, min, loc, unix, code){
             return response.json();
         })
         .then(data => {
-            console.log(data)
+            // console.log(data)
             data = data.currentConditions;
 
             const cloudcover = data.cloudcover;
@@ -131,7 +131,63 @@ export async function WeatherForecast(rk, min, loc, unix, code){
             );
             
             const result = [weather, time, text, temp] 
-            return result;
+            
+            if(result == undefined){
+                document.getElementById(`root_${code}`).remove();
+                map.eachLayer(layer => {
+                    if(layer.options && layer.options.id === `mark_${code}`){
+                        map.removeLayer(layer);
+                    }
+                });
+            }else{
+                document.getElementById(`wea_${code}`).innerHTML = weather;
+
+                // bindPopup per button here
+                map.eachLayer(layer => {
+                    if(layer.options && layer.options.id === `mark_${code}`){
+                        layer.bindPopup(`
+                        <div class="bindPopup">
+                            <div id="bp-ad">
+                                <b>${ad}</b><br>
+                                <i>${time}</i>
+                            </div>
+                            <div class="bp-icon-temp">
+                                <img src="../images/weather_icon/${text}.png" class="icon">
+                                <div>${temp}&deg;C</div>
+                            </div>
+                            <div>
+                                <a class="details" href="#root_${code}">See weather details</a>
+                            </div>
+                        </div>
+                        `)
+                        layer.openPopup();
+                    }
+                })
+
+                //setting up accordion
+                const acd = document.getElementById(`acd-${code}`);
+                acd.onclick = function(){
+                    acd.classList.toggle('active');
+                    const panel = acd.nextElementSibling;
+                    if(panel.style.maxHeight){
+                        panel.style.maxHeight = null;
+                    }else{
+                        panel.style.maxHeight = panel.scrollHeight + 'px';
+                    }
+                }
+            }
+
+            if(c === waypoints-1){
+                document.getElementById('loader2').remove();
+            }
+        
+            document.getElementById(`loc_${code}`).onclick = () => {
+                map.eachLayer(layer => {
+                    if(layer.options && layer.options.id === `mark_${code}`){
+                        layer.openPopup();
+                    }
+                })
+            }
         })
         .catch(err => {
             console.error(err);

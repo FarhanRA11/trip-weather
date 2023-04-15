@@ -1,7 +1,10 @@
-export async function getAddress(rk, min, loc){
+import { WeatherForecast } from './weather.js';
+
+var address_list = [];
+export async function getAddress(rk, min, loc, pass_unix, index, code, waypoints){
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${loc}&key=${rk.as[min%3]}&language=en&no_annotations=1&address_only=1&limit=1&no_record=1&abbrv=1`;
     
-    return fetch(url, {method: 'GET'})
+    fetch(url, {method: 'GET'})
         .then(response => {
             if(!response.ok){
                 throw new Error("There's Problem");
@@ -37,7 +40,25 @@ export async function getAddress(rk, min, loc){
             }
             
             const address = new_list.reverse().join(',');
-            return address;
+            if(index === 0){
+                document.getElementById('tt_ori').textContent += address.replaceAll(',',', ');
+            }else if(index === waypoints-1){
+                document.getElementById('tt_des').textContent += address.replaceAll(',',', ');
+                document.getElementById('loader1').remove();
+            }
+        
+            if((!address_list.includes(address) || index === waypoints-1) && address.split(',').length > 2){
+                address_list.push(address);
+                document.getElementById(`loc_${code}`).textContent = address.replaceAll(',',', ');
+                WeatherForecast(rk, min, address.replaceAll(',',', '), pass_unix, index, code, loc, waypoints);
+            }else{
+                document.getElementById(`root_${code}`).remove();
+                map.eachLayer(layer => {
+                    if(layer.options && layer.options.id === `mark_${code}`){
+                        map.removeLayer(layer);
+                    }
+                });
+            }
         })
         .catch(err => {
             console.error(err);
